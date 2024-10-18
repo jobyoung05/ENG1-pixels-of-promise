@@ -1,5 +1,8 @@
 # Pixels of promise
 
+(From mo): I have used [this tutorial](https://libgdx.com/wiki/start/a-simple-game) to initially understand how LibGDX works, please have a look, it seems to be pretty straight forward to draw things and move them about. We just need to worry about how to do the backend logic and how to link that with the rendering.
+There is a second tutorial that goes in more depth so its best to at least read through that, if not implementing it. 
+
 A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
 
 This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
