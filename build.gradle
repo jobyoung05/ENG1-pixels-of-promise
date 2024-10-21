@@ -58,7 +58,7 @@ configure(subprojects) {
 
 subprojects {
   version = '$projectVersion'
-  ext.appName = 'Pixels of promise'
+  ext.appName = 'Pixels Of Promise'
   repositories {
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org' }
@@ -70,4 +70,4 @@ subprojects {
   }
 }
 
-eclipse.project.name = 'Pixels of promise' + '-parent'
+eclipse.project.name = 'Pixels Of Promise' + '-parent'
