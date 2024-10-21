@@ -20,8 +20,6 @@ public class GameScreen implements Screen {
     private TiledMap map;
     private TiledMapRenderer renderer;
     private Texture tiles;
-    private Texture texture;
-    private final int screenWidth = 300;
     private final int tileSize = 16;
     private OrthographicCamera camera;
     private OrthoCamController cameraController;
@@ -33,16 +31,18 @@ public class GameScreen implements Screen {
         float height = Gdx.graphics.getHeight();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, (width / height) * screenWidth, 300);
+        camera.setToOrtho(false, width, height);
         camera.update();
 
-        cameraController = new OrthoCamController(camera);
+        //cameraController = new OrthoCamController(camera);
         Gdx.input.setInputProcessor(cameraController);
         {
             tiles = new Texture(Gdx.files.internal("galletcity.png"));
             TextureRegion[][] splitTiles = TextureRegion.split(tiles, tileSize, tileSize);
             map = new TiledMap();
+
             MapLayers layers = map.getLayers();
+
             for (int l = 0; l < 20; l++) {
                 TiledMapTileLayer layer = new TiledMapTileLayer(150, 150, tileSize, tileSize);
                 for (int x = 0; x < 150; x++) {
@@ -55,8 +55,8 @@ public class GameScreen implements Screen {
                     }
                 }
                 layers.add(layer);
-            }
 
+            }
 
             // Initialize the renderer with the map
             renderer = new OrthogonalTiledMapRenderer(map);

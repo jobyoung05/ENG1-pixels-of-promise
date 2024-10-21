@@ -13,7 +13,7 @@ public class OrthoCamController extends InputAdapter {
 
     private float zoomSpeed = 0.1f; // The speed at which zooming occurs
     private float minZoom = 0.1f;   // Minimum zoom level (zoomed in)
-    private float maxZoom = 5f;     // Maximum zoom level (zoomed out)
+    private float maxZoom = 2f;     // Maximum zoom level (zoomed out)
 
     public OrthoCamController(OrthographicCamera camera) {
         this.camera = camera;
@@ -21,6 +21,7 @@ public class OrthoCamController extends InputAdapter {
 
     @Override
     public boolean touchDragged(int x, int y, int pointer) {
+
         camera.unproject(current.set(x, y, 0));
         if (!(last.x == -1 && last.y == -1 && last.z == -1)) {
             camera.unproject(delta.set(last.x, last.y, 0));
@@ -62,4 +63,5 @@ public class OrthoCamController extends InputAdapter {
 
         return true;
     }
+
 }
