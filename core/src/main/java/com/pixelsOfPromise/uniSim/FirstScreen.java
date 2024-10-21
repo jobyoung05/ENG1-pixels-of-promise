@@ -1,4 +1,4 @@
-package com.pixelsOfPromise;
+package com.pixelsOfPromise.uniSim;
 
 import com.badlogic.gdx.Screen;
 

@@ -14,7 +14,7 @@
  */
 //Note, the above license and copyright applies to this file only.
 
-package com.pixelsOfPromise.lwjgl3;
+package com.pixelsOfPromise.uniSim.lwjgl3;
 
 import org.lwjgl.system.macosx.LibC;
 
