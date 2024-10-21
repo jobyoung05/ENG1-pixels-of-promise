@@ -23,8 +23,6 @@ public class GameScreen implements Screen {
     private final int tileSize = 16;
     private OrthographicCamera camera;
     private OrthoCamController cameraController;
-    private String currentTileName;
-    private boolean isCurrentTileManmade;
 
     public GameScreen(final UniSim game) {
         this.game = game;
@@ -81,8 +79,8 @@ public class GameScreen implements Screen {
         renderer.setView(camera);
         renderer.render();
 
-        currentTileName = getCurrentTileName();
-        isCurrentTileManmade = getCurrentTileManmade();
+        String currentTileName = getCurrentTileName();
+        boolean isCurrentTileManmade = getCurrentTileManmade();
 
         // Render the FPS
         game.batch.begin();
