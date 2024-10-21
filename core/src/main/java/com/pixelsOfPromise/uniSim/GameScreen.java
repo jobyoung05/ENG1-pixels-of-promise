@@ -23,6 +23,8 @@ public class GameScreen implements Screen {
     private final int tileSize = 16;
     private OrthographicCamera camera;
     private OrthoCamController cameraController;
+    private String currentTileName;
+    private boolean isCurrentTileManmade;
 
     public GameScreen(final UniSim game) {
         this.game = game;
@@ -79,9 +81,14 @@ public class GameScreen implements Screen {
         renderer.setView(camera);
         renderer.render();
 
+        currentTileName = getCurrentTileName();
+        isCurrentTileManmade = getCurrentTileManmade();
+
         // Render the FPS
         game.batch.begin();
         game.font.draw(game.batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
+        game.font.draw(game.batch, "Current cell ID (map base): " + currentTileName, 80, 20);
+        game.font.draw(game.batch, "Manmade tile: " + String.valueOf(isCurrentTileManmade), 290, 20);
         game.batch.end();
     }
 
@@ -110,5 +117,29 @@ public class GameScreen implements Screen {
     public void dispose() {
         map.dispose();
         tiles.dispose();
+    }
+
+    private String getCurrentTileName() {
+        String id;
+        int tileX = Gdx.input.getX() / tileSize;
+        int tileY = (Gdx.graphics.getHeight() - Gdx.input.getY()) / tileSize;
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(0);
+        TiledMapTileLayer.Cell cell = layer.getCell(tileX, tileY);
+        if (cell != null) {
+            id = String.valueOf(cell.getTile().getId());
+        }
+        else{
+            id = "?";
+        }
+        return id;
+    }
+
+    private boolean getCurrentTileManmade(){
+        int tileX = Gdx.input.getX() / tileSize;
+        int tileY = (Gdx.graphics.getHeight() - Gdx.input.getY()) / tileSize;
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
+        TiledMapTileLayer.Cell cell = layer.getCell(tileX, tileY);
+        return cell != null;
+
     }
 }
