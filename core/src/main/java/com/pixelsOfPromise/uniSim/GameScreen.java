@@ -88,7 +88,7 @@ public class GameScreen implements Screen {
         game.batch.begin();
         game.font.draw(game.batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
         game.font.draw(game.batch, "Current cell ID (map base): " + currentTileName, 80, 20);
-        game.font.draw(game.batch, "Manmade tile: " + String.valueOf(isCurrentTileManmade), 290, 20);
+        game.font.draw(game.batch, "Manmade tile: " + isCurrentTileManmade, 290, 20);
         game.batch.end();
     }
 
