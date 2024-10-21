@@ -3,6 +3,7 @@ package com.pixelsOfPromise.uniSim;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.Gdx;
 
 public class OrthoCamController extends InputAdapter {
     final OrthographicCamera camera;
@@ -38,11 +39,26 @@ public class OrthoCamController extends InputAdapter {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        // Zoom in/out by adjusting the camera zoom property
+        // Get the mouse position in world coordinates before zooming
+        Vector3 mousePosBeforeZoom = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+        // Apply zoom
         camera.zoom += amountY * zoomSpeed;
 
         // Clamp the zoom to stay within minZoom and maxZoom values
         camera.zoom = Math.max(minZoom, Math.min(maxZoom, camera.zoom));
+
+        // Update the camera projection matrix
+        camera.update();
+
+        // Get the mouse position in world coordinates after zooming
+        Vector3 mousePosAfterZoom = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+        // Calculate the difference between mouse positions due to zooming
+        Vector3 zoomDelta = mousePosBeforeZoom.sub(mousePosAfterZoom);
+
+        // Move the camera by the difference to zoom towards the mouse pointer
+        camera.position.add(zoomDelta.x, zoomDelta.y, 0);
 
         return true;
     }
