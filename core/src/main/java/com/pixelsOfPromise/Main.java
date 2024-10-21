@@ -1,6 +1,6 @@
 package com.pixelsOfPromise;
 
-import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,12 +12,12 @@ import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main implements ApplicationListener {
+public class Main extends Game {
     private TiledMap map;
     private TiledMapRenderer renderer;
     private OrthographicCamera camera;
@@ -64,9 +64,12 @@ public class Main implements ApplicationListener {
                 layers.add(layer);
             }
 
+
             // Initialize the renderer with the map
             renderer = new OrthogonalTiledMapRenderer(map);
         }
+        map = new TmxMapLoader().load("untitled.tmx");
+        renderer = new OrthogonalTiledMapRenderer(map);
     }
 
     @Override
