@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.pixelsOfPromise.uniSim.TileInfo;
@@ -23,10 +24,12 @@ public class GameScreen implements Screen {
     private TiledMap map;
     private TiledMapRenderer renderer;
     private Texture tiles;
+    private TextureRegion[] allTiles;
     private final int tileSize = 16;
     private OrthographicCamera camera;
     private OrthoCamController cameraController;
     private int currentLayer = 0;
+    private int[] lastClicked = {0,0};
 
     public GameScreen(final UniSim game) {
         this.game = game;
@@ -46,7 +49,7 @@ public class GameScreen implements Screen {
         tiles = new Texture(Gdx.files.internal("galletcity.png"));
         TextureRegion[][] splitTiles = TextureRegion.split(tiles, tileSize, tileSize);
         // Flatten the 2D array for easier access
-        TextureRegion[] allTiles = new TextureRegion[168];
+        allTiles = new TextureRegion[168];
         for (int y = 0; y < 21; y++) {
             for (int x = 0; x < 8; x++) {
                 allTiles[y * 8 + x] = splitTiles[y][x];
@@ -58,34 +61,38 @@ public class GameScreen implements Screen {
         MapLayers layers = map.getLayers();
         TiledMapTileLayer background = new TiledMapTileLayer(60, 36, tileSize, tileSize);
         int tileId = 95;
-            for (int x = 0; x < 60; x++) {
-                for (int y = 0; y < 36; y++) {
-                    TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                    StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[tileId]);
-                    tile.setId(tileId);  // Explicitly setting the tile ID
-                    cell.setTile(tile);
-                    background.setCell(x, y, cell);
+        for (int x = 0; x < 60; x++) {
+            for (int y = 0; y < 36; y++) {
+                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+                StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[tileId]);
+                tile.setId(tileId);  // Explicitly setting the tile ID
+                cell.setTile(tile);
+                background.setCell(x, y, cell);
 
-                }
             }
-            layers.add(background);
+        }
+        layers.add(background);
 
+        // ****Loads the premade map instead****
+        map = new TmxMapLoader().load("untitled.tmx");
+        // *************************************
+
+        // add a new empty layer for tile selector
+        map.getLayers().add(new TiledMapTileLayer(60, 36, tileSize, tileSize));
         // Initialize the renderer with the map we just created
         renderer = new OrthogonalTiledMapRenderer(map);
-        // Loads the premade map instead
-        //map = new TmxMapLoader().load("untitled.tmx");
-        //renderer = new OrthogonalTiledMapRenderer(map);
     }
 
 
     @Override
     public void render(float v) {
         ScreenUtils.clear(100f / 255f, 100f / 255f, 250f / 255f, 1f);
-
+        UpdateSelectionLayer();
         // Render the map
         camera.update();
         renderer.setView(camera);
         renderer.render();
+
 
         //Switches the layer viewed for debugging
         if (Gdx.input.isKeyJustPressed(Input.Keys.L) && map.getLayers().getCount() > 1) {
@@ -152,4 +159,26 @@ public class GameScreen implements Screen {
         return new TileInfo(id, isManmade);
     }
 
+    private void UpdateSelectionLayer(){
+
+        Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        // Convert world coordinates to tile coordinates
+        int tileX = (int) (worldCoordinates.x / tileSize);
+        int tileY = (int) (worldCoordinates.y / tileSize);
+
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(2);
+
+
+        layer.setCell(lastClicked[0], lastClicked[1], null);
+
+        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+        StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[166]);
+        tile.setId(166);  // Explicitly setting the tile ID
+        cell.setTile(tile);
+        layer.setCell(tileX, tileY, cell);
+
+
+
+        lastClicked= new int[]{tileX, tileY};
+    }
 }
