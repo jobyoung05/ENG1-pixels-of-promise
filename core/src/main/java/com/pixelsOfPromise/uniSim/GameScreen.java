@@ -82,7 +82,7 @@ public class GameScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         buildings = new Building[1]; // this will need to be a dynamic array at some point but for now it's static
-        buildings[0] = new Building("test", 0, 34, 28);
+        buildings[0] = new Building("test", 34, 28);
         DrawBuildings();
     }
 
