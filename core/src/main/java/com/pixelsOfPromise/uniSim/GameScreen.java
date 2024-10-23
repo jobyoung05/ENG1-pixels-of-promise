@@ -27,7 +27,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private OrthoCamController cameraController;
     private int currentLayer = 0;
-    private int[] lastClicked = {0,0};
+    private int[] lastHoveredTile = {0,0};
 
     public GameScreen(final UniSim game) {
         this.game = game;
@@ -158,25 +158,26 @@ public class GameScreen implements Screen {
     }
 
     private void UpdateSelectionLayer(){
-
+        // Get the mouse screen coordinates
         Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         // Convert world coordinates to tile coordinates
         int tileX = (int) (worldCoordinates.x / tileSize);
         int tileY = (int) (worldCoordinates.y / tileSize);
 
+        // Select the highlighting layer
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(2);
 
+        // Remove previously selected tile
+        layer.setCell(lastHoveredTile[0], lastHoveredTile[1], null);
 
-        layer.setCell(lastClicked[0], lastClicked[1], null);
-
+        // Set the current cell to be tile #166 (selection tile)
         TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
         StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[166]);
         tile.setId(166);  // Explicitly setting the tile ID
         cell.setTile(tile);
         layer.setCell(tileX, tileY, cell);
 
-
-
-        lastClicked= new int[]{tileX, tileY};
+        // Record the location of the tile we just set
+        lastHoveredTile = new int[]{tileX, tileY};
     }
 }
