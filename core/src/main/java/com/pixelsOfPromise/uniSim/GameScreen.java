@@ -28,6 +28,7 @@ public class GameScreen implements Screen {
     private OrthoCamController cameraController;
     private int currentLayer = 0;
     private int[] lastHoveredTile = {0,0};
+    private Building[] buildings;
 
     public GameScreen(final UniSim game) {
         this.game = game;
@@ -79,6 +80,10 @@ public class GameScreen implements Screen {
         map.getLayers().add(new TiledMapTileLayer(60, 36, tileSize, tileSize));
         // Initialize the renderer with the map we just created
         renderer = new OrthogonalTiledMapRenderer(map);
+
+        buildings = new Building[1]; // this will need to be a dynamic array at some point but for now it's static
+        buildings[0] = new Building("test", 0, 34, 28);
+        DrawBuildings();
     }
 
 
@@ -100,12 +105,17 @@ public class GameScreen implements Screen {
         // Get tile information
         TileInfo tileInfo = getCurrentTileInfo();
 
+        String debugString = "FPS: " + Gdx.graphics.getFramesPerSecond() + "  "
+            + "Layer: " + currentLayer + "  "
+            + "Cell ID: " + tileInfo.id + "  ("
+            + (tileInfo.isFlippedH ? "H, " : "")
+            + (tileInfo.isFlippedV ? "V, " : "")
+            + tileInfo.rotation + ")";
+
         // Render the FPS
         game.batch.begin();
-        game.font.draw(game.batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
-        game.font.draw(game.batch, "Layer: " + currentLayer, 70, 20);
-        game.font.draw(game.batch, "Current cell ID (map base): " + tileInfo.id, 130, 20);
-        game.font.draw(game.batch, "Manmade tile: " + tileInfo.isManmade, 350, 20);
+        game.font.draw(game.batch, debugString, 10, 20);
+
         game.batch.end();
     }
 
@@ -148,13 +158,17 @@ public class GameScreen implements Screen {
         int tileX = (int) (worldCoordinates.x / tileSize);
         int tileY = (int) (worldCoordinates.y / tileSize);
 
+        // Get the current cell
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(currentLayer);
         TiledMapTileLayer.Cell cell = layer.getCell(tileX, tileY);
 
-        String id = (cell != null) ? String.valueOf(cell.getTile().getId()) : "?";
-        boolean isManmade = (cell != null && currentLayer != 0);
+        // Get the required data from the cell
+        int id = (cell != null) ? cell.getTile().getId() - 1: -1;
+        boolean isFlippedH = (cell != null) ? cell.getFlipHorizontally() : false;
+        boolean isFlippedV = (cell != null) ? cell.getFlipVertically() : false;
+        int rotation = (cell != null) ? cell.getRotation() : -1;
 
-        return new TileInfo(id, isManmade);
+        return new TileInfo(id, isFlippedH, isFlippedV, rotation);
     }
 
     private void UpdateSelectionLayer(){
@@ -179,5 +193,39 @@ public class GameScreen implements Screen {
 
         // Record the location of the tile we just set
         lastHoveredTile = new int[]{tileX, tileY};
+    }
+
+    private void DrawBuildings(){
+        /*
+        Although this function 'works', I want to move it inside the building class, as it only gets called when the
+        building is created, for that instance of Building. If we were to draw more than one building, we would be
+        re-drawing every building each time a new building was created
+         */
+
+
+        // Get the 'building' layer
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
+
+        // For each building, add each tile to the map at its specified position
+        for (int i = 0; i < buildings.length; i++) {
+            TileInfo[][] tiles = buildings[i].getTileInfoArray();
+            int x = buildings[i].getX();
+            int y = buildings[i].getY();
+            for (int j = 0; j < tiles.length; j++) {
+                for (int k = 0; k < tiles[j].length; k++) {
+
+                    TileInfo currentTileInfo = tiles[j][k];
+
+                    TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+                    StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[currentTileInfo.id]);
+                    tile.setId(currentTileInfo.id);  // Explicitly setting the tile ID
+                    cell.setTile(tile);
+                    cell.setFlipHorizontally(currentTileInfo.isFlippedH);
+                    cell.setFlipVertically(currentTileInfo.isFlippedV);
+                    cell.setRotation(currentTileInfo.rotation);
+                    layer.setCell(x + k, y - j, cell);
+                }
+            }
+        }
     }
 }
