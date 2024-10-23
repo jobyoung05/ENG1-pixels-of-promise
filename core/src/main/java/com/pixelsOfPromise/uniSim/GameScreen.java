@@ -164,8 +164,8 @@ public class GameScreen implements Screen {
 
         // Get the required data from the cell
         int id = (cell != null) ? cell.getTile().getId() - 1: -1;
-        boolean isFlippedH = (cell != null) ? cell.getFlipHorizontally() : false;
-        boolean isFlippedV = (cell != null) ? cell.getFlipVertically() : false;
+        boolean isFlippedH = cell != null && cell.getFlipHorizontally();
+        boolean isFlippedV = cell != null && cell.getFlipVertically();
         int rotation = (cell != null) ? cell.getRotation() : -1;
 
         return new TileInfo(id, isFlippedH, isFlippedV, rotation);
