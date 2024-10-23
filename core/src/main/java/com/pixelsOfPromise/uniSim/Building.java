@@ -2,11 +2,10 @@ package com.pixelsOfPromise.uniSim;
 
 public class Building {
     private String buildingName;
-    private String configLocation = "Buildings.json";
     private int x;
     private int y;
     private TileInfo[][] TileInfoArray;
-    public Building(String buildingName, int index, int x, int y) {
+    public Building(String buildingName, int x, int y) {
         this.buildingName = buildingName;
         this.x = x;
         this.y = y;
