@@ -1,8 +1,5 @@
 package com.pixelsOfPromise.uniSim;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-
 public class TileInfo {
     public int id;
     public boolean isFlippedH;
