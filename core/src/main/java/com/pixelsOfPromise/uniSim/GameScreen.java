@@ -23,7 +23,7 @@ public class GameScreen implements Screen {
     private TiledMap map;
     private TiledMapRenderer renderer;
     private Texture tiles;
-    private TextureRegion[] allTiles;
+    private TextureRegion[] textureRegions;
     private final int tileSize = 16;
     private OrthographicCamera camera;
     private OrthoCamController cameraController;
@@ -51,10 +51,10 @@ public class GameScreen implements Screen {
         tiles = new Texture(Gdx.files.internal("galletcity.png"));
         TextureRegion[][] splitTiles = TextureRegion.split(tiles, tileSize, tileSize);
         // Flatten the 2D array for easier access
-        allTiles = new TextureRegion[168];
+        textureRegions = new TextureRegion[168];
         for (int y = 0; y < 21; y++) {
             for (int x = 0; x < 8; x++) {
-                allTiles[y * 8 + x] = splitTiles[y][x];
+                textureRegions[y * 8 + x] = splitTiles[y][x];
             }
         }
 
@@ -66,7 +66,7 @@ public class GameScreen implements Screen {
         for (int x = 0; x < 60; x++) {
             for (int y = 0; y < 36; y++) {
                 TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[tileId]);
+                StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[tileId]);
                 tile.setId(tileId);  // Explicitly setting the tile ID
                 cell.setTile(tile);
                 background.setCell(x, y, cell);
@@ -85,8 +85,8 @@ public class GameScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         buildings = new Building[1]; // this will need to be a dynamic array at some point but for now it's static
-        buildings[0] = new Building("test", 34, 28);
-        drawBuildings();
+        buildings[0] = new Building("test", 2,34, 28);
+        buildings[0].addToLayer(map, textureRegions);
     }
 
 
@@ -191,7 +191,7 @@ public class GameScreen implements Screen {
 
         // Set the current cell to be tile #166 (selection tile)
         TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-        StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[166]);
+        StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[166]);
         tile.setId(166);  // Explicitly setting the tile ID
         cell.setTile(tile);
         layer.setCell(tileX, tileY, cell);
@@ -222,7 +222,7 @@ public class GameScreen implements Screen {
                     TileInfo currentTileInfo = tiles[j][k];
 
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                    StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[currentTileInfo.id]);
+                    StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[currentTileInfo.id]);
                     tile.setId(currentTileInfo.id);  // Explicitly setting the tile ID
                     cell.setTile(tile);
                     cell.setFlipHorizontally(currentTileInfo.isFlippedH);
