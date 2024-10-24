@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Vector3;
 public class GameScreen implements Screen {
     final UniSim game;
 
+    private Timer timer;
     private TiledMap map;
     private TiledMapRenderer renderer;
     private Texture tiles;
@@ -43,6 +44,8 @@ public class GameScreen implements Screen {
         cameraController = new OrthoCamController(camera, width, height);
         Gdx.input.setInputProcessor(cameraController);
 
+        //create the timer
+        timer = new Timer();
 
         // Load the tiles from the texture pack
         tiles = new Texture(Gdx.files.internal("galletcity.png"));
@@ -96,6 +99,7 @@ public class GameScreen implements Screen {
         renderer.setView(camera);
         renderer.render();
 
+        timer.add(Gdx.graphics.getDeltaTime());
 
         //Switches the layer viewed for debugging
         if (Gdx.input.isKeyJustPressed(Input.Keys.L) && map.getLayers().getCount() > 1) {
@@ -110,7 +114,8 @@ public class GameScreen implements Screen {
             + "Cell ID: " + tileInfo.id + "  ("
             + (tileInfo.isFlippedH ? "H, " : "")
             + (tileInfo.isFlippedV ? "V, " : "")
-            + tileInfo.rotation + ")";
+            + tileInfo.rotation + ") "
+            + "Timer:" + (float) Math.round(timer.getTime()*10) / 10;
 
         // Render the FPS
         game.batch.begin();
