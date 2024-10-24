@@ -83,14 +83,14 @@ public class GameScreen implements Screen {
 
         buildings = new Building[1]; // this will need to be a dynamic array at some point but for now it's static
         buildings[0] = new Building("test", 34, 28);
-        DrawBuildings();
+        drawBuildings();
     }
 
 
     @Override
     public void render(float v) {
         ScreenUtils.clear(100f / 255f, 100f / 255f, 250f / 255f, 1f);
-        UpdateSelectionLayer();
+        updateSelectionLayer();
         // Render the map
         camera.update();
         renderer.setView(camera);
@@ -171,7 +171,7 @@ public class GameScreen implements Screen {
         return new TileInfo(id, isFlippedH, isFlippedV, rotation);
     }
 
-    private void UpdateSelectionLayer(){
+    private void updateSelectionLayer(){
         // Get the mouse screen coordinates
         Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         // Convert world coordinates to tile coordinates
@@ -195,7 +195,7 @@ public class GameScreen implements Screen {
         lastHoveredTile = new int[]{tileX, tileY};
     }
 
-    private void DrawBuildings(){
+    private void drawBuildings(){
         /*
         Although this function 'works', I want to move it inside the building class, as it only gets called when the
         building is created, for that instance of Building. If we were to draw more than one building, we would be
