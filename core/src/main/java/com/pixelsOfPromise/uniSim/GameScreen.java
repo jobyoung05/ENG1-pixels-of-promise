@@ -91,7 +91,7 @@ public class GameScreen implements Screen {
 
 
     @Override
-    public void render(float v) {
+    public void render(float delta) {
         ScreenUtils.clear(100f / 255f, 100f / 255f, 250f / 255f, 1f);
         updateSelectionLayer();
         // Render the map
@@ -99,7 +99,7 @@ public class GameScreen implements Screen {
         renderer.setView(camera);
         renderer.render();
 
-        timer.add(Gdx.graphics.getDeltaTime());
+        timer.add(delta);
 
         //Switches the layer viewed for debugging
         if (Gdx.input.isKeyJustPressed(Input.Keys.L) && map.getLayers().getCount() > 1) {
