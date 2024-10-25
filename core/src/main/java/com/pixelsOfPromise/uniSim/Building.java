@@ -1,12 +1,19 @@
 package com.pixelsOfPromise.uniSim;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+
 public class Building {
     private String buildingName;
+    private int cost;
     private int x;
     private int y;
     private TileInfo[][] TileInfoArray;
-    public Building(String buildingName, int x, int y) {
+    public Building(String buildingName, int cost, int x, int y) {
         this.buildingName = buildingName;
+        this.cost = cost;
         this.x = x;
         this.y = y;
 
@@ -51,5 +58,24 @@ public class Building {
 
     public int getY(){
         return y;
+    }
+
+    public void addToLayer(TiledMap map, TextureRegion[] textureRegions) {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
+        for (int j = 0; j < TileInfoArray.length; j++) {
+            for (int k = 0; k < TileInfoArray[j].length; k++) {
+
+                TileInfo currentTileInfo = TileInfoArray[j][k];
+
+                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+                StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[currentTileInfo.id]);
+                tile.setId(currentTileInfo.id);  // Explicitly setting the tile ID
+                cell.setTile(tile);
+                cell.setFlipHorizontally(currentTileInfo.isFlippedH);
+                cell.setFlipVertically(currentTileInfo.isFlippedV);
+                cell.setRotation(currentTileInfo.rotation);
+                layer.setCell(x + k, y - j, cell);
+            }
+        }
     }
 }
