@@ -1,0 +1,12 @@
+@startuml
+actor       Player       as Foo1
+actor       UI           as Foo2
+actor       Logic        as Foo3
+actor       Screen       as Foo4
+
+Foo -> Foo1 : To actor
+Foo -> Foo2 : To boundary
+Foo -> Foo3 : To control
+Foo -> Foo4 : To entity
+
+@enduml
