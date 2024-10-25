@@ -123,7 +123,7 @@ public class GameScreen implements Screen {
             + (tileInfo.isFlippedH ? "H, " : "")
             + (tileInfo.isFlippedV ? "V, " : "")
             + tileInfo.rotation + ") "
-            + "Timer:" + (float) Math.round(timer.getTime() * 10) / 10;
+            + "Timer:" + timer.getTimeUI();
 
         // Render the FPS
         game.batch.begin();
