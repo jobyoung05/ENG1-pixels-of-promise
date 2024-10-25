@@ -1,12 +1,12 @@
 @startuml
 actor       Player       as Foo1
-actor       UI           as Foo2
-actor       Logic        as Foo3
-actor       Screen       as Foo4
 
-Foo -> Foo1 : To actor
-Foo -> Foo2 : To boundary
-Foo -> Foo3 : To control
-Foo -> Foo4 : To entity
+Foo1 -> UI : Select building
+UI -> Logic : Size tiles
+Logic -> Screen : Draw transparent
+Foo1 -> Screen : Click to place on positioned
+Screen -> Logic : Check valid
+Logic -> Screen : Draw actual building
+
 
 @enduml
