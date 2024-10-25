@@ -1,0 +1,19 @@
+@startuml
+
+[*] --> MainMenu: Opens game
+
+SaveScore --> MainMenu: Replay game
+
+MainMenu : this is a string
+
+MainMenu -> DisplayScores: To scoreboard
+DisplayScores -> MainMenu: Back to menu
+
+
+MainMenu -> GameRunning: Clicks play
+GameRunning -> SaveScore: Game ends after 5 minutes
+GameRunning --> [*]: Exit
+
+SaveScore --> [*]: Score saved and exit
+
+@enduml
