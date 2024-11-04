@@ -5,12 +5,13 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 
-public class Building {
+public class Building implements Placeable {
     private String buildingName;
     private int cost;
     private int x;
     private int y;
     private TileInfo[][] TileInfoArray;
+
     public Building(String buildingName, int cost, int x, int y) {
         this.buildingName = buildingName;
         this.cost = cost;
@@ -77,5 +78,35 @@ public class Building {
                 layer.setCell(x + k, y - j, cell);
             }
         }
+    }
+
+    @Override
+    public void removeFromLayer(TiledMap map, TextureRegion[] textureRegionsr) {
+
+    }
+
+    @Override
+    public Boolean checkIfValidPosition(int x, int y) {
+        return null;
+    }
+
+    @Override
+    public void placeAt(int x, int y) {
+
+    }
+
+    @Override
+    public void removeFrom(int x, int y) {
+
+    }
+
+    @Override
+    public int getCost() {
+        return 0;
+    }
+
+    @Override
+    public String getBuildingName() {
+        return this.buildingName;
     }
 }
