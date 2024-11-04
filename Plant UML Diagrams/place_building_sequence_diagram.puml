@@ -1,0 +1,30 @@
+@startuml
+actor User
+participant GameUI
+participant InputHandler
+participant GameLogic
+participant GameMap
+participant Renderer
+participant GameScreen
+
+User -> GameUI : Clicks "Place Building"
+GameUI -> InputHandler : Start Building Placement
+InputHandler -> GameLogic : Check if building limit is reached
+GameLogic -> GameLogic : Validate building limit
+
+User -> GameUI : Chooses location on the map
+GameUI -> GameLogic : Send selected coordinates
+GameLogic -> GameLogic : Validate building position
+GameLogic --> GameLogic : Confirm valid position
+
+GameLogic -> GameLogic : Place building and deduct resources
+GameLogic -> GameMap : Update map with new building
+GameMap --> GameLogic : Confirm building added
+
+GameLogic -> GameScreen : Notify to update visuals
+GameScreen -> Renderer : Render new building
+Renderer --> GameScreen : Visual updated
+
+GameScreen -> GameUI : Update UI elements (resources, count)
+GameUI --> User : Display successful placement
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+actor User
+participant GameUI
+participant InputHandler
+participant GameLogic
+participant GameMap
+participant Renderer
+participant GameScreen
+
+User -> GameUI : Selects "Delete Mode"
+GameUI -> InputHandler : Enter Delete Mode
+InputHandler -> GameUI : Change cursor color to red
+GameUI -> GameScreen : Highlight item on hover with red box
+
+loop While in Delete Mode
+    User -> GameUI : Moves cursor over item
+    GameUI -> GameScreen : Highlight hovered item with red box
+
+    User -> GameUI : Clicks on item to delete
+    GameUI -> GameLogic : Request deletion of selected item
+    GameLogic -> GameMap : Remove item from map
+    GameMap --> GameLogic : Confirm item removed
+    GameLogic -> GameScreen : Notify to remove item visuals
+    GameScreen -> Renderer : Update rendering to remove item
+    Renderer --> GameScreen : Confirm visual update
+    GameScreen -> GameUI : Update UI elements (refresh)
+end
+
+User -> GameUI : Exits "Delete Mode"
+GameUI -> InputHandler : Exit Delete Mode
+InputHandler -> GameUI : Change cursor back to normal
+GameUI -> GameScreen : Remove red box from items
+GameUI --> User : Display successful exit from delete mode
+@enduml
