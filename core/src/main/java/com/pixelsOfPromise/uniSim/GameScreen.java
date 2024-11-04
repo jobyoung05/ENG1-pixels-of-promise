@@ -58,29 +58,26 @@ public class GameScreen implements Screen {
         // Create map and background layer(0)
         map = new TiledMap();
         MapLayers layers = map.getLayers();
-        TiledMapTileLayer background = new TiledMapTileLayer(60, 40, tileSize, tileSize);
-        for (int y = 0; y < 40; y++) {
-            for (int x = 0; x < 60; x++) {
-                int tileId = 95;
-                if (y > 36) {
-                    tileId = 166;
-                }
+        TiledMapTileLayer background = new TiledMapTileLayer(60, 36, tileSize, tileSize);
+        int tileId = 95;
+        for (int x = 0; x < 60; x++) {
+            for (int y = 0; y < 36; y++) {
                 TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                 StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[tileId]);
                 tile.setId(tileId);  // Explicitly setting the tile ID
                 cell.setTile(tile);
                 background.setCell(x, y, cell);
+
             }
         }
         layers.add(background);
 
         // ****Loads the premade map instead****
         map = new TmxMapLoader().load("untitled.tmx");
-        // If premade map is disabled for testing of the background you need to add another layer or else it crashes
-        // map.getLayers().add(new TiledMapTileLayer(60, 40, tileSize, tileSize));
         // *************************************
+
         // add a new empty layer for tile selector
-       map.getLayers().add(new TiledMapTileLayer(60, 40, tileSize, tileSize));
+        map.getLayers().add(new TiledMapTileLayer(60, 36, tileSize, tileSize));
         // Initialize the renderer with the map we just created
         renderer = new OrthogonalTiledMapRenderer(map);
 

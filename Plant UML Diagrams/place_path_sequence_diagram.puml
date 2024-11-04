@@ -1,0 +1,37 @@
+@startuml
+actor User
+participant GameUI
+participant InputHandler
+participant GameLogic
+participant GameMap
+participant Renderer
+participant GameScreen
+
+User -> GameUI : Selects "Place Path Mode"
+GameUI -> InputHandler : Enter Path Placement Mode
+InputHandler -> GameUI : Change cursor to path placement indicator
+
+loop While user is in "Place Path Mode"
+    User -> GameUI : Chooses location on the map
+    GameUI -> GameLogic : Send selected coordinates for path placement
+    GameLogic -> GameLogic : Check if user has enough money for path
+
+    alt User has enough money
+        GameLogic -> GameLogic : Deduct cost for path placement
+        GameLogic -> GameMap : Add path to map at selected coordinates
+        GameMap --> GameLogic : Confirm path added
+        GameLogic -> GameScreen : Notify to update visuals
+        GameScreen -> Renderer : Render new path at location
+        Renderer --> GameScreen : Confirm visual update
+        GameScreen -> GameUI : Update UI elements (resources, path count)
+    else User doesn't have enough money
+        GameLogic -> GameUI : Notify "Insufficient funds"
+        GameUI --> User : Display error message
+    end
+end
+
+User -> GameUI : Exits "Place Path Mode"
+GameUI -> InputHandler : Exit Path Placement Mode
+InputHandler -> GameUI : Change cursor back to normal
+GameUI --> User : Display successful exit from path mode
+@enduml
