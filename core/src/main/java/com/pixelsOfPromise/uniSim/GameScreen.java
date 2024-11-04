@@ -2,6 +2,7 @@ package com.pixelsOfPromise.uniSim;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.Vector3;
 
@@ -23,6 +25,7 @@ public class GameScreen implements Screen {
     private final int tileSize = 16;
     private final int mapWidth = 60;
     private final int mapHeight = 36;
+    private boolean isPaused = false;
     private Timer timer;
     private TiledMap map;
     private TiledMapRenderer renderer;
@@ -30,6 +33,7 @@ public class GameScreen implements Screen {
     private TextureRegion[] textureRegions;
     private OrthographicCamera camera;
     private OrthoCamController cameraController;
+    private Stage buttonStage;
     private int currentLayer = 0;
     private int[] lastHoveredTile = {0,0};
     private Building[] buildings;
@@ -45,7 +49,12 @@ public class GameScreen implements Screen {
         camera.update();
         // Creates the camera controller
         cameraController = new OrthoCamController(camera, width, height);
-        Gdx.input.setInputProcessor(cameraController);
+        buttonStage = new Stage();
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        //inputMultiplexer.addProcessor(cameraController);
+        //inputMultiplexer.addProcessor(buttonStage);
+        //Gdx.input.setInputProcessor(inputMultiplexer)
+        Gdx.input.setInputProcessor(buttonStage);
 
         //create the timer
         timer = new Timer();
