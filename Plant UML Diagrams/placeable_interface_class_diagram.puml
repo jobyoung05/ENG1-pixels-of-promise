@@ -1,0 +1,61 @@
+@startuml
+
+' Define the Placeable interface with common methods
+interface Placeable {
+    + checkIfValidPosition(position: Position): Boolean
+    + placeAt(position: Position): void
+    + removeFrom(position: Position): void
+    + addToLayer(layer: Layer): void
+    + removeFromLayer(layer: Layer): void
+    + getCost(): int
+    + checkBuildingLimit(): Boolean
+    + highlightForPlacement(): void
+    + clearHighlight(): void
+    + updateVisuals(): void
+    + getType(): PlaceableType
+    + getID(): String
+}
+
+' Enum for PlaceableType to distinguish types of placeable objects
+enum PlaceableType {
+    Building
+    Path
+}
+
+' Define the Building class implementing Placeable interface
+class Building implements Placeable {
+    + checkIfValidPosition(position: Position): Boolean
+    + placeAt(position: Position): void
+    + removeFrom(position: Position): void
+    + addToLayer(layer: Layer): void
+    + removeFromLayer(layer: Layer): void
+    + getCost(): int
+    + checkBuildingLimit(): Boolean
+    + highlightForPlacement(): void
+    + clearHighlight(): void
+    + updateVisuals(): void
+    + getType(): PlaceableType
+    + getID(): String
+}
+
+' Define the Path class implementing Placeable interface
+class Path implements Placeable {
+    + checkIfValidPosition(position: Position): Boolean
+    + placeAt(position: Position): void
+    + removeFrom(position: Position): void
+    + addToLayer(layer: Layer): void
+    + removeFromLayer(layer: Layer): void
+    + getCost(): int
+    + checkBuildingLimit(): Boolean
+    + highlightForPlacement(): void
+    + clearHighlight(): void
+    + updateVisuals(): void
+    + getType(): PlaceableType
+    + getID(): String
+}
+
+' Define relationships
+Building ..> PlaceableType : uses
+Path ..> PlaceableType : uses
+
+@enduml

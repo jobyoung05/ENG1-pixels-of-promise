@@ -1,0 +1,68 @@
+@startuml
+[*] --> Idle : Enter Playing Mode
+state Idle
+
+Idle --> MovingBuilding : Select Move Building
+Idle --> EventHandling : Event Occurs
+Idle --> BuildingConstruction : Select Build Building
+Idle --> PathPlacement : Select Place Paths
+Idle --> ObjectDeletion : Select Delete Object
+
+state MovingBuilding {
+    [*] --> Move_SelectingBuilding
+    Move_SelectingBuilding --> Move_CheckBuildingValidity : Building Selected
+    Move_CheckBuildingValidity --> Move_Moving : Valid Building
+    Move_CheckBuildingValidity --> Move_SelectingBuilding : Invalid Building
+
+    Move_Moving --> Move_CheckNewPosition : Move to New Position
+    Move_CheckNewPosition --> Move_Placing : New Position is Valid
+    Move_CheckNewPosition --> Move_Moving : New Position is Invalid
+
+    Move_Placing --> Move_Confirming : Place Building
+    Move_Confirming --> Move_Finish : Confirm Placement
+    Move_Finish --> [*] : Placement Complete
+}
+
+state EventHandling {
+    [*] --> Event_Occurring
+    Event_Occurring --> Event_PlayerReacts : Player Reacts to Event
+    Event_PlayerReacts --> Event_Ends : Event Resolution
+    Event_Ends --> Event_Finish : Event Ends
+    Event_Finish --> [*] : Event Handling Complete
+}
+
+state BuildingConstruction {
+    [*] --> Build_SelectingBuilding
+    Build_SelectingBuilding --> Build_SelectingPosition : Select Building Position
+    Build_SelectingPosition --> Build_ConfirmingPosition : Confirm Position
+    Build_ConfirmingPosition --> Build_Constructing : Valid Position
+    Build_ConfirmingPosition --> Build_SelectingPosition : Invalid Position
+    Build_Constructing --> Build_Finish : Building Complete
+    Build_Finish --> [*] : Building Placed
+}
+
+state PathPlacement {
+    [*] --> Path_SelectingPath
+    Path_SelectingPath --> Path_SelectingPosition : Select Path Position
+    Path_SelectingPosition --> Path_ConfirmingPosition : Confirm Position
+    Path_ConfirmingPosition --> Path_SelectingPosition : Place Another Path
+    Path_ConfirmingPosition --> Path_Finish : Finish Path Placement
+    Path_Finish --> [*] : Path Placement Complete
+}
+
+state ObjectDeletion {
+    [*] --> Delete_SelectingObject
+    Delete_SelectingObject --> Delete_CheckingDeletable : Check if Object Can be Deleted
+    Delete_CheckingDeletable --> Delete_Deleting : Object Can be Deleted
+    Delete_CheckingDeletable --> Delete_SelectingObject : Object Cannot be Deleted
+    Delete_Deleting --> Delete_SelectingObject : Continue Deleting Objects
+    Delete_Deleting --> Delete_Finish : Exit Delete Mode
+    Delete_Finish --> [*] : Deletion Complete
+}
+
+MovingBuilding --> Idle : Return to Idle
+EventHandling --> Idle : Return to Idle
+BuildingConstruction --> Idle : Return to Idle
+PathPlacement --> Idle : Return to Idle
+ObjectDeletion --> Idle : Return to Idle
+@enduml
