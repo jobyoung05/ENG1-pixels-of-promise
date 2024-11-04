@@ -4,7 +4,7 @@ public class Timer {
     float time;
 
     public Timer() {
-        this.time = 50;
+        this.time = 0;
     }
 
     public void add(float deltaTime) {
