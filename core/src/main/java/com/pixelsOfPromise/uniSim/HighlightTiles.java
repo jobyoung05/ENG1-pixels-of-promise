@@ -7,9 +7,9 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.utils.Array;
 
 public class HighlightTiles {
-    private int tileSize = 16; // Assuming tile size is 32 pixels
-    private int highlightWidth; // Half-width for 4x3 grid (2 tiles on each side horizontally)
-    private int highlightHeight; // Half-height for 4x3 grid (1 tile on each side vertically)
+    private int tileSize = 16;
+    private int highlightWidth;
+    private int highlightHeight;
     private Array<int[]> lastHoveredTiles = new Array<>(); // Track all highlighted tiles
 
     public void updateHighlight(TiledMapTileLayer layer, Vector3 worldCoordinates, TextureRegion[] textureRegions, int highlightHeight, int highlightWidth) {
@@ -23,7 +23,7 @@ public class HighlightTiles {
         }
         lastHoveredTiles.clear();
 
-        // Highlight a 4x3 grid around the mouse's tile
+        // Highlight a width*height around the mouse, but the mouse is the bottom-left corner of the rectangle
         for (int dx = 0; dx <= highlightWidth; dx++) {
             for (int dy = 0; dy <= highlightHeight; dy++) {
                 int highlightX = tileX + dx;
@@ -49,7 +49,6 @@ public class HighlightTiles {
         int tileX = (int) (worldCoordinates.x / tileSize);
         int tileY = (int) (worldCoordinates.y / tileSize);
 
-        // Highlight a 4x3 grid around the mouse's tile
         for (int dx = 0; dx <= highlightWidth; dx++) {
             for (int dy = 0; dy <= highlightHeight; dy++) {
                 int highlightX = tileX + dx;
