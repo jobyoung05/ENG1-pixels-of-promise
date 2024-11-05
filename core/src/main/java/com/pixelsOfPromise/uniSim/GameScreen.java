@@ -123,7 +123,12 @@ public class GameScreen implements Screen {
 
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-            isPlacing = !isPlacing;
+            if (isPlacing) {
+                isPlacing = false;
+                highlightTiles.clearHighlight(layer, worldCoordinates, 6,4);
+            } else {
+                isPlacing = true;
+            }
         }
 
         if (isPlacing) {

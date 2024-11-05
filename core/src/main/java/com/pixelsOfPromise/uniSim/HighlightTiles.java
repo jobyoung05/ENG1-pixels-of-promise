@@ -43,4 +43,23 @@ public class HighlightTiles {
             }
         }
     }
+
+    public void clearHighlight(TiledMapTileLayer layer, Vector3 worldCoordinates, int highlightHeight, int highlightWidth) {
+        // Calculate the center tile coordinates from mouse position
+        int tileX = (int) (worldCoordinates.x / tileSize);
+        int tileY = (int) (worldCoordinates.y / tileSize);
+
+        // Highlight a 4x3 grid around the mouse's tile
+        for (int dx = 0; dx <= highlightWidth; dx++) {
+            for (int dy = 0; dy <= highlightHeight; dy++) {
+                int highlightX = tileX + dx;
+                int highlightY = tileY + dy;
+
+                // Ensure highlightX and highlightY are within map bounds
+                if (highlightX >= 0 && highlightY >= 0 && highlightX < layer.getWidth() && highlightY < layer.getHeight()) {
+                    layer.setCell(highlightX, highlightY, null);
+                }
+            }
+        }
+    }
 }
