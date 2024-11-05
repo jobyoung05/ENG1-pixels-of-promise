@@ -37,6 +37,9 @@ public class Building {
         this.tileInfoArray = tileInfoArray;
     }
 
+    // TODO
+    // can this be used to highlight tiles? we can store the past positions of the tiles
+    // then we can use this to easily move and place buildings??  saves having to use highlight tiles.java
     public void addToLayer(TiledMap map, TextureRegion[] textureRegions) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
         for (int j = 0; j < tileInfoArray.length; j++) {
