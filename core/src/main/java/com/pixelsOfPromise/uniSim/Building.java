@@ -81,7 +81,7 @@ public class Building implements Placeable {
     }
 
     @Override
-    public void removeFromLayer(TiledMap map, TextureRegion[] textureRegionsr) {
+    public void removeFromLayer(TiledMap map, TextureRegion[] textureRegions) {
 
     }
 
@@ -102,7 +102,7 @@ public class Building implements Placeable {
 
     @Override
     public int getCost() {
-        return 0;
+        return this.cost;
     }
 
     @Override
