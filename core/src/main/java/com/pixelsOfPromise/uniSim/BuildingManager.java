@@ -63,4 +63,8 @@ public class BuildingManager {
         }
         return null;
     }
+
+    public Building getBuilding(String name) {
+        return buildings.get(name);
+    }
 }

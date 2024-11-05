@@ -145,7 +145,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
             if (isPlacing) {
                 isPlacing = false;
-                highlightTiles.clearHighlight(layer, worldCoordinates, 6,4);
+                highlightTiles.clearHighlight(layer, worldCoordinates, buildingManager.getBuilding("accommodation"));
                 // maybe it would be better to pass in an oject that already has all of these things? or if not all of it
                 // definitely the size, textures to be used, etc. like this works fine for a simple colour of size n*m
                 // would not work so well for a building with different tiles being used
@@ -156,7 +156,7 @@ public class GameScreen implements Screen {
         }
 
         if (isPlacing) {
-            highlightTiles.updateHighlight(layer, worldCoordinates, textureRegions, 7, 5);
+            highlightTiles.updateHighlight(layer, worldCoordinates, textureRegions, buildingManager.getBuilding("accommodation"));
         }
 
         // Render the map
