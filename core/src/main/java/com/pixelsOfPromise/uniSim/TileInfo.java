@@ -27,4 +27,12 @@ public class TileInfo {
         this.rotation = 0;
     }
 
+    // Copy constructor
+    public TileInfo(TileInfo other) {
+        this.id = other.id;
+        this.isFlippedH = other.isFlippedH;
+        this.isFlippedV = other.isFlippedV;
+        this.rotation = 0;
+    }
+
 }
