@@ -126,6 +126,10 @@ public class GameScreen implements Screen {
             if (isPlacing) {
                 isPlacing = false;
                 highlightTiles.clearHighlight(layer, worldCoordinates, 6,4);
+                // maybe it would be better to pass in an oject that already has all of these things? or if not all of it
+                // definitely the size, textures to be used, etc. like this works fine for a simple colour of size n*m
+                // would not work so well for a building with different tiles being used
+                // store all available buildings in a dynamic list? then pass one in
             } else {
                 isPlacing = true;
             }
