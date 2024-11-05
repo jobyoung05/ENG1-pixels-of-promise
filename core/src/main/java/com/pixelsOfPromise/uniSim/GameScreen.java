@@ -21,7 +21,6 @@ import com.badlogic.gdx.math.Vector3;
 public class GameScreen implements Screen {
     final UniSim game;
 
-
     private final int tileSize = 16;
     private final int mapWidth = 60;
     private final int mapHeight = 36;
@@ -37,11 +36,16 @@ public class GameScreen implements Screen {
     private int currentLayer = 0;
     private int[] lastHoveredTile = {0,0};
     private Building[] buildings;
+    private Boolean isPlacing = false;
+    private HighlightTiles highlightTiles;
 
     public GameScreen(final UniSim game) {
         this.game = game;
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
+
+        // Initialize HighlightTiles with any tile size (assuming 32 here)
+        highlightTiles = new HighlightTiles();
 
         // Creates the camera and sets the viewpoint
         camera = new OrthographicCamera();
@@ -56,7 +60,7 @@ public class GameScreen implements Screen {
         //Gdx.input.setInputProcessor(inputMultiplexer)
         Gdx.input.setInputProcessor(buttonStage);
 
-        //create the timer
+        // Create the timer
         timer = new Timer();
 
         // Load the tiles from the texture pack
@@ -72,25 +76,11 @@ public class GameScreen implements Screen {
 
         // Create map and background layer(0)
 
-
         map = new TiledMap();
         MapLayers layers = map.getLayers();
-        TiledMapTileLayer background = new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize);
-        int tileId = 95;
-        for (int x = 0; x < 60; x++) {
-            for (int y = 0; y < 36; y++) {
-                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[tileId]);
-                tile.setId(tileId);  // Explicitly setting the tile ID
-                cell.setTile(tile);
-                background.setCell(x, y, cell);
-
-            }
-        }
+        TiledMapTileLayer background = getTiledMapTileLayer();
         layers.add(background);
         layers.add(new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize));
-
-
 
         // ****Loads the premade map instead****
         map = new TmxMapLoader().load("untitled.tmx");
@@ -106,11 +96,40 @@ public class GameScreen implements Screen {
         buildings[0].addToLayer(map, textureRegions);
     }
 
+    private TiledMapTileLayer getTiledMapTileLayer() {
+        TiledMapTileLayer background = new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize);
+        int tileId = 95;
+        for (int x = 0; x < 60; x++) {
+            for (int y = 0; y < 36; y++) {
+                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+                StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[tileId]);
+                tile.setId(tileId);  // Explicitly setting the tile ID
+                cell.setTile(tile);
+                background.setCell(x, y, cell);
+
+            }
+        }
+        return background;
+    }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(100f / 255f, 100f / 255f, 250f / 255f, 1f);
         updateSelectionLayer();
+
+
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(2);
+        Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            isPlacing = !isPlacing;
+        }
+
+        if (isPlacing) {
+            highlightTiles.updateHighlight(layer, worldCoordinates, textureRegions, 7, 5);
+        }
+
         // Render the map
         camera.update();
         renderer.setView(camera);
