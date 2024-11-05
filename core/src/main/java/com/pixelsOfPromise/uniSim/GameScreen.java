@@ -109,7 +109,7 @@ public class GameScreen implements Screen {
 
         availableBuildings[0] = buildingManager.getBuildingInstance("accommodation");
         availableBuildings[1] = buildingManager.getBuildingInstance("accommodation");
-        System.out.println(Arrays.toString(availableBuildings));
+//        System.out.println(Arrays.toString(availableBuildings));
         availableBuildings[0].setLocation(34, 28);
         availableBuildings[1].setLocation(10,10);
         availableBuildings[0].addToLayer(map, textureRegions);

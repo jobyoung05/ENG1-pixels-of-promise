@@ -51,7 +51,9 @@ public class Building {
                 cell.setFlipHorizontally(currentTileInfo.isFlippedH);
                 cell.setFlipVertically(currentTileInfo.isFlippedV);
                 cell.setRotation(currentTileInfo.rotation);
-                layer.setCell(x + k, y - j, cell);
+
+                // Ensures that the building is placed with the x,y being in the bottom-left corner
+                layer.setCell(x + k, y + (tileInfoArray.length - 1 - j), cell);
             }
         }
     }
