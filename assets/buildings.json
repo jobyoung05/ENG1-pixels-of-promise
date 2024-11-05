@@ -1,0 +1,99 @@
+{
+    "buildings": {
+        "accommodation": {
+            "name": "accommodation",
+            "cost": 10,
+            "TileInfoArray": [
+                [
+                    {
+                        "value": 72
+                    },
+                    {
+                        "value": 74
+                    },
+                    {
+                        "value": 74
+                    },
+                    {
+                        "value": 74
+                    },
+                    {
+                        "value": 72,
+                        "flag1": true,
+                        "flag2": false
+                    }
+                ],
+                [
+                    {
+                        "value": 136
+                    },
+                    {
+                        "value": 5
+                    },
+                    {
+                        "value": 81
+                    },
+                    {
+                        "value": 5
+                    },
+                    {
+                        "value": 80,
+                        "flag1": true,
+                        "flag2": false
+                    }
+                ],
+                [
+                    {
+                        "value": 160
+                    },
+                    {
+                        "value": 156
+                    },
+                    {
+                        "value": 156
+                    },
+                    {
+                        "value": 156
+                    },
+                    {
+                        "value": 153
+                    }
+                ],
+                [
+                    {
+                        "value": 160
+                    },
+                    {
+                        "value": 157
+                    },
+                    {
+                        "value": 157
+                    },
+                    {
+                        "value": 157
+                    },
+                    {
+                        "value": 153
+                    }
+                ],
+                [
+                    {
+                        "value": 160
+                    },
+                    {
+                        "value": 162
+                    },
+                    {
+                        "value": 162
+                    },
+                    {
+                        "value": 162
+                    },
+                    {
+                        "value": 153
+                    }
+                ]
+            ]
+        }
+    }
+}

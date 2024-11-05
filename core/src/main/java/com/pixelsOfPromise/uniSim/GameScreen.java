@@ -18,6 +18,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.Vector3;
 
+import java.util.Arrays;
+
+
+// TODO
+// create an array of Buildings that are available, and an array of Buildings that are being used. this would make
+// limits easy to introduce, as well as making it easy to pass into HighlightTiles (hopefully)
+
 public class GameScreen implements Screen {
     final UniSim game;
 
@@ -35,16 +42,23 @@ public class GameScreen implements Screen {
     private Stage buttonStage;
     private int currentLayer = 0;
     private int[] lastHoveredTile = {0,0};
-    private Building[] buildings;
+
+    // Building related stuff
+    private BuildingManager buildingManager;
+    private Building[] availableBuildings = new Building[10];
+    private Building[] placedBuildings = new Building[10];
+    private Building currentBuildingBeingPlaced;
     private Boolean isPlacing = false;
     private HighlightTiles highlightTiles;
+
+    // No more building stuff
 
     public GameScreen(final UniSim game) {
         this.game = game;
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
 
-        // Initialize HighlightTiles with any tile size (assuming 32 here)
+        // Initialize HighlightTiles with tile size 16
         highlightTiles = new HighlightTiles();
 
         // Creates the camera and sets the viewpoint
@@ -55,7 +69,7 @@ public class GameScreen implements Screen {
         cameraController = new OrthoCamController(camera, width, height);
         buttonStage = new Stage();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
-        //inputMultiplexer.addProcessor(cameraController);
+        inputMultiplexer.addProcessor(cameraController);
         //inputMultiplexer.addProcessor(buttonStage);
         //Gdx.input.setInputProcessor(inputMultiplexer)
         Gdx.input.setInputProcessor(buttonStage);
@@ -75,7 +89,6 @@ public class GameScreen implements Screen {
         }
 
         // Create map and background layer(0)
-
         map = new TiledMap();
         MapLayers layers = map.getLayers();
         TiledMapTileLayer background = getTiledMapTileLayer();
@@ -91,9 +104,16 @@ public class GameScreen implements Screen {
         // Initialize the renderer with the map we just created
         renderer = new OrthogonalTiledMapRenderer(map);
 
-        buildings = new Building[1]; // this will need to be a dynamic array at some point but for now it's static
-        buildings[0] = new Building("test", 2,34, 28);
-        buildings[0].addToLayer(map, textureRegions);
+        // Buildings
+        buildingManager = new BuildingManager("buildings.json");
+
+        availableBuildings[0] = buildingManager.getBuildingInstance("accommodation");
+        availableBuildings[1] = buildingManager.getBuildingInstance("accommodation");
+//        System.out.println(Arrays.toString(availableBuildings));
+        availableBuildings[0].setLocation(34, 28);
+        availableBuildings[1].setLocation(10,10);
+        availableBuildings[0].addToLayer(map, textureRegions);
+        availableBuildings[1].addToLayer(map, textureRegions);
     }
 
     private TiledMapTileLayer getTiledMapTileLayer() {
@@ -125,7 +145,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
             if (isPlacing) {
                 isPlacing = false;
-                highlightTiles.clearHighlight(layer, worldCoordinates, 6,4);
+                highlightTiles.clearHighlight(layer, worldCoordinates, buildingManager.getBuilding("accommodation"));
                 // maybe it would be better to pass in an oject that already has all of these things? or if not all of it
                 // definitely the size, textures to be used, etc. like this works fine for a simple colour of size n*m
                 // would not work so well for a building with different tiles being used
@@ -136,7 +156,7 @@ public class GameScreen implements Screen {
         }
 
         if (isPlacing) {
-            highlightTiles.updateHighlight(layer, worldCoordinates, textureRegions, 7, 5);
+            highlightTiles.updateHighlight(layer, worldCoordinates, textureRegions, buildingManager.getBuilding("accommodation"));
         }
 
         // Render the map
@@ -154,12 +174,16 @@ public class GameScreen implements Screen {
         // Get tile information
         TileInfo tileInfo = getCurrentTileInfo();
 
+        int tileX = (int) (worldCoordinates.x / tileSize);
+        int tileY = (int) (worldCoordinates.y / tileSize);
+
         String debugString = "FPS: " + Gdx.graphics.getFramesPerSecond() + "  "
             + "Layer: " + currentLayer + "  "
             + "Cell ID: " + tileInfo.id + "  ("
             + (tileInfo.isFlippedH ? "H, " : "")
             + (tileInfo.isFlippedV ? "V, " : "")
             + tileInfo.rotation + ") "
+            + "Position: " + tileX + ", " + tileY + " "
             + "Timer:" + timer.getTimeUI();
 
         // Render the FPS
