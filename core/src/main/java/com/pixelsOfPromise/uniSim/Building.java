@@ -6,66 +6,46 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 
 public class Building {
-    private String buildingName;
+    private String name;
     private int cost;
+    private TileInfo[][] tileInfoArray;
     private int x;
     private int y;
-    private TileInfo[][] TileInfoArray;
-    public Building(String buildingName, int cost, int x, int y) {
-        this.buildingName = buildingName;
+
+    // Getters and Setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
         this.cost = cost;
-        this.x = x;
-        this.y = y;
-
-        // Hard coded building for now ;)
-        TileInfoArray = new TileInfo[5][5];
-        TileInfoArray[0][0] = new TileInfo(72);
-        TileInfoArray[0][1] = new TileInfo(74);
-        TileInfoArray[0][2] = new TileInfo(74);
-        TileInfoArray[0][3] = new TileInfo(74);
-        TileInfoArray[0][4] = new TileInfo(72, true, false);
-        TileInfoArray[1][0] = new TileInfo(136);
-        TileInfoArray[1][1] = new TileInfo(5);
-        TileInfoArray[1][2] = new TileInfo(81);
-        TileInfoArray[1][3] = new TileInfo(5);
-        TileInfoArray[1][4] = new TileInfo(80, true, false);
-        TileInfoArray[2][0] = new TileInfo(160);
-        TileInfoArray[2][1] = new TileInfo(156);
-        TileInfoArray[2][2] = new TileInfo(156);
-        TileInfoArray[2][3] = new TileInfo(156);
-        TileInfoArray[2][4] = new TileInfo(153);
-        TileInfoArray[3][0] = new TileInfo(160);
-        TileInfoArray[3][1] = new TileInfo(157);
-        TileInfoArray[3][2] = new TileInfo(157);
-        TileInfoArray[3][3] = new TileInfo(157);
-        TileInfoArray[3][4] = new TileInfo(153);
-        TileInfoArray[4][0] = new TileInfo(160);
-        TileInfoArray[4][1] = new TileInfo(162);
-        TileInfoArray[4][2] = new TileInfo(162);
-        TileInfoArray[4][3] = new TileInfo(162);
-        TileInfoArray[4][4] = new TileInfo(153);
-        // How lovely
-
     }
 
-    public TileInfo[][] getTileInfoArray(){
-        return TileInfoArray;
+    public TileInfo[][] getTileInfoArray() {
+        return tileInfoArray;
     }
 
-    public int getX(){
-        return x;
+    public void setTileInfoArray(TileInfo[][] tileInfoArray) {
+        this.tileInfoArray = tileInfoArray;
     }
 
-    public int getY(){
-        return y;
-    }
-
+    // TODO
+    // can this be used to highlight tiles? we can store the past positions of the tiles
+    // then we can use this to easily move and place buildings??  saves having to use highlight tiles.java
     public void addToLayer(TiledMap map, TextureRegion[] textureRegions) {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
-        for (int j = 0; j < TileInfoArray.length; j++) {
-            for (int k = 0; k < TileInfoArray[j].length; k++) {
+        for (int j = 0; j < tileInfoArray.length; j++) {
+            for (int k = 0; k < tileInfoArray[j].length; k++) {
 
-                TileInfo currentTileInfo = TileInfoArray[j][k];
+                TileInfo currentTileInfo = tileInfoArray[j][k];
 
                 TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                 StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[currentTileInfo.id]);
@@ -74,8 +54,31 @@ public class Building {
                 cell.setFlipHorizontally(currentTileInfo.isFlippedH);
                 cell.setFlipVertically(currentTileInfo.isFlippedV);
                 cell.setRotation(currentTileInfo.rotation);
-                layer.setCell(x + k, y - j, cell);
+
+                // Ensures that the building is placed with the x,y being in the bottom-left corner
+                layer.setCell(x + k, y + (tileInfoArray.length - 1 - j), cell);
             }
         }
+    }
+
+    public Building(Building other) {
+        this.name = other.name;
+        this.cost = other.cost;
+        this.setLocation(0,0);
+        this.tileInfoArray = new TileInfo[other.tileInfoArray.length][];
+        for (int i = 0; i < other.tileInfoArray.length; i++) {
+            this.tileInfoArray[i] = new TileInfo[other.tileInfoArray[i].length];
+            for (int j = 0; j < other.tileInfoArray[i].length; j++) {
+                this.tileInfoArray[i][j] = new TileInfo(other.tileInfoArray[i][j]);
+            }
+        }
+    }
+
+    public Building() {
+    }
+
+    public void setLocation(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }

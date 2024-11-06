@@ -2,6 +2,7 @@ package com.pixelsOfPromise.uniSim;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,27 +14,52 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.Vector3;
+
+import java.util.Arrays;
+
+
+// TODO
+// create an array of Buildings that are available, and an array of Buildings that are being used. this would make
+// limits easy to introduce, as well as making it easy to pass into HighlightTiles (hopefully)
 
 public class GameScreen implements Screen {
     final UniSim game;
 
+    private final int tileSize = 16;
+    private final int mapWidth = 60;
+    private final int mapHeight = 36;
+    private boolean isPaused = false;
+    private Timer timer;
     private TiledMap map;
     private TiledMapRenderer renderer;
-    private Texture tiles;
-    private TextureRegion[] allTiles;
-    private final int tileSize = 16;
+    private Texture tileTexture;
+    private TextureRegion[] textureRegions;
     private OrthographicCamera camera;
     private OrthoCamController cameraController;
+    private Stage buttonStage;
     private int currentLayer = 0;
     private int[] lastHoveredTile = {0,0};
-    private Building[] buildings;
+
+    // Building related stuff
+    private BuildingManager buildingManager;
+    private Building[] availableBuildings = new Building[10];
+    private Building[] placedBuildings = new Building[10];
+    private Building currentBuildingBeingPlaced;
+    private Boolean isPlacing = false;
+    private HighlightTiles highlightTiles;
+
+    // No more building stuff
 
     public GameScreen(final UniSim game) {
         this.game = game;
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
+
+        // Initialize HighlightTiles with tile size 16
+        highlightTiles = new HighlightTiles();
 
         // Creates the camera and sets the viewpoint
         camera = new OrthographicCamera();
@@ -41,61 +67,104 @@ public class GameScreen implements Screen {
         camera.update();
         // Creates the camera controller
         cameraController = new OrthoCamController(camera, width, height);
-        Gdx.input.setInputProcessor(cameraController);
+        buttonStage = new Stage();
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(cameraController);
+        //inputMultiplexer.addProcessor(buttonStage);
+        //Gdx.input.setInputProcessor(inputMultiplexer)
+        Gdx.input.setInputProcessor(buttonStage);
 
+        // Create the timer
+        timer = new Timer();
 
         // Load the tiles from the texture pack
-        tiles = new Texture(Gdx.files.internal("galletcity.png"));
-        TextureRegion[][] splitTiles = TextureRegion.split(tiles, tileSize, tileSize);
+        tileTexture = new Texture(Gdx.files.internal("galletcity.png"));
+        TextureRegion[][] splitTiles = TextureRegion.split(tileTexture, tileSize, tileSize);
         // Flatten the 2D array for easier access
-        allTiles = new TextureRegion[168];
+        textureRegions = new TextureRegion[168];
         for (int y = 0; y < 21; y++) {
             for (int x = 0; x < 8; x++) {
-                allTiles[y * 8 + x] = splitTiles[y][x];
+                textureRegions[y * 8 + x] = splitTiles[y][x];
             }
         }
 
         // Create map and background layer(0)
         map = new TiledMap();
         MapLayers layers = map.getLayers();
-        TiledMapTileLayer background = new TiledMapTileLayer(60, 36, tileSize, tileSize);
-        int tileId = 95;
-        for (int x = 0; x < 60; x++) {
-            for (int y = 0; y < 36; y++) {
-                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[tileId]);
-                tile.setId(tileId);  // Explicitly setting the tile ID
-                cell.setTile(tile);
-                background.setCell(x, y, cell);
-
-            }
-        }
+        TiledMapTileLayer background = getTiledMapTileLayer();
         layers.add(background);
+        layers.add(new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize));
 
         // ****Loads the premade map instead****
         map = new TmxMapLoader().load("untitled.tmx");
         // *************************************
 
         // add a new empty layer for tile selector
-        map.getLayers().add(new TiledMapTileLayer(60, 36, tileSize, tileSize));
+        map.getLayers().add(new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize));
         // Initialize the renderer with the map we just created
         renderer = new OrthogonalTiledMapRenderer(map);
 
-        buildings = new Building[1]; // this will need to be a dynamic array at some point but for now it's static
-        buildings[0] = new Building("test", 34, 28);
-        DrawBuildings();
+        // Buildings
+        buildingManager = new BuildingManager("buildings.json");
+
+        availableBuildings[0] = buildingManager.getBuildingInstance("accommodation");
+        availableBuildings[1] = buildingManager.getBuildingInstance("accommodation");
+//        System.out.println(Arrays.toString(availableBuildings));
+        availableBuildings[0].setLocation(34, 28);
+        availableBuildings[1].setLocation(10,10);
+        availableBuildings[0].addToLayer(map, textureRegions);
+        availableBuildings[1].addToLayer(map, textureRegions);
     }
 
+    private TiledMapTileLayer getTiledMapTileLayer() {
+        TiledMapTileLayer background = new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize);
+        int tileId = 95;
+        for (int x = 0; x < 60; x++) {
+            for (int y = 0; y < 36; y++) {
+                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+                StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[tileId]);
+                tile.setId(tileId);  // Explicitly setting the tile ID
+                cell.setTile(tile);
+                background.setCell(x, y, cell);
+
+            }
+        }
+        return background;
+    }
 
     @Override
-    public void render(float v) {
+    public void render(float delta) {
         ScreenUtils.clear(100f / 255f, 100f / 255f, 250f / 255f, 1f);
-        UpdateSelectionLayer();
+        updateSelectionLayer();
+
+
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(2);
+        Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            if (isPlacing) {
+                isPlacing = false;
+                highlightTiles.clearHighlight(layer, worldCoordinates, buildingManager.getBuilding("accommodation"));
+                // maybe it would be better to pass in an oject that already has all of these things? or if not all of it
+                // definitely the size, textures to be used, etc. like this works fine for a simple colour of size n*m
+                // would not work so well for a building with different tiles being used
+                // store all available buildings in a dynamic list? then pass one in
+            } else {
+                isPlacing = true;
+            }
+        }
+
+        if (isPlacing) {
+            highlightTiles.updateHighlight(layer, worldCoordinates, textureRegions, buildingManager.getBuilding("accommodation"));
+        }
+
         // Render the map
         camera.update();
         renderer.setView(camera);
         renderer.render();
 
+        timer.add(delta);
 
         //Switches the layer viewed for debugging
         if (Gdx.input.isKeyJustPressed(Input.Keys.L) && map.getLayers().getCount() > 1) {
@@ -105,17 +174,21 @@ public class GameScreen implements Screen {
         // Get tile information
         TileInfo tileInfo = getCurrentTileInfo();
 
+        int tileX = (int) (worldCoordinates.x / tileSize);
+        int tileY = (int) (worldCoordinates.y / tileSize);
+
         String debugString = "FPS: " + Gdx.graphics.getFramesPerSecond() + "  "
             + "Layer: " + currentLayer + "  "
             + "Cell ID: " + tileInfo.id + "  ("
             + (tileInfo.isFlippedH ? "H, " : "")
             + (tileInfo.isFlippedV ? "V, " : "")
-            + tileInfo.rotation + ")";
+            + tileInfo.rotation + ") "
+            + "Position: " + tileX + ", " + tileY + " "
+            + "Timer:" + timer.getTimeUI();
 
         // Render the FPS
         game.batch.begin();
         game.font.draw(game.batch, debugString, 10, 20);
-
         game.batch.end();
     }
 
@@ -147,7 +220,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         map.dispose();
-        tiles.dispose();
+        tileTexture.dispose();
     }
 
     //Returns the tile id and whether it is man made (can be used to determine if a tile is removable)
@@ -171,7 +244,7 @@ public class GameScreen implements Screen {
         return new TileInfo(id, isFlippedH, isFlippedV, rotation);
     }
 
-    private void UpdateSelectionLayer(){
+    private void updateSelectionLayer(){
         // Get the mouse screen coordinates
         Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         // Convert world coordinates to tile coordinates
@@ -186,46 +259,12 @@ public class GameScreen implements Screen {
 
         // Set the current cell to be tile #166 (selection tile)
         TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-        StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[166]);
+        StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[166]);
         tile.setId(166);  // Explicitly setting the tile ID
         cell.setTile(tile);
         layer.setCell(tileX, tileY, cell);
 
         // Record the location of the tile we just set
         lastHoveredTile = new int[]{tileX, tileY};
-    }
-
-    private void DrawBuildings(){
-        /*
-        Although this function 'works', I want to move it inside the building class, as it only gets called when the
-        building is created, for that instance of Building. If we were to draw more than one building, we would be
-        re-drawing every building each time a new building was created
-         */
-
-
-        // Get the 'building' layer
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
-
-        // For each building, add each tile to the map at its specified position
-        for (int i = 0; i < buildings.length; i++) {
-            TileInfo[][] tiles = buildings[i].getTileInfoArray();
-            int x = buildings[i].getX();
-            int y = buildings[i].getY();
-            for (int j = 0; j < tiles.length; j++) {
-                for (int k = 0; k < tiles[j].length; k++) {
-
-                    TileInfo currentTileInfo = tiles[j][k];
-
-                    TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                    StaticTiledMapTile tile = new StaticTiledMapTile(allTiles[currentTileInfo.id]);
-                    tile.setId(currentTileInfo.id);  // Explicitly setting the tile ID
-                    cell.setTile(tile);
-                    cell.setFlipHorizontally(currentTileInfo.isFlippedH);
-                    cell.setFlipVertically(currentTileInfo.isFlippedV);
-                    cell.setRotation(currentTileInfo.rotation);
-                    layer.setCell(x + k, y - j, cell);
-                }
-            }
-        }
     }
 }

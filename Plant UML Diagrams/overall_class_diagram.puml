@@ -1,0 +1,43 @@
+@startuml
+
+class GameUI {
+    + displayMessage(message: String): void
+    + getUserAction(): String
+}
+
+class InputHandler {
+    + processInput(action: String): void
+    + sendActionToGameLogic(action: String): void
+}
+
+class GameLogic {
+    + validateAction(action: String): Boolean
+    + updateGameState(): void
+}
+
+class GameMap {
+    + addObject(object: Placeable): void
+    + removeObject(objectID: String): void
+    + getObjectAt(position: Position): Placeable
+}
+
+class Renderer {
+    + renderObject(object: Placeable): void
+    + clearScreen(): void
+    + updateDisplay(): void
+}
+
+class GameScreen {
+    + refreshUI(): void
+    + updateGameUI(): void
+}
+
+GameUI o-- InputHandler : "communicates with"
+InputHandler o-- GameLogic : "relays actions to"
+GameLogic o-- GameMap : "updates"
+GameLogic o-- GameScreen : "notifies"
+GameMap o-- Renderer : "provides data to"
+GameScreen o-- Renderer : "renders on"
+GameUI o-- GameScreen : "updates UI"
+
+@enduml
