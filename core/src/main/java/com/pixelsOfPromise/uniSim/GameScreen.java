@@ -90,16 +90,16 @@ public class GameScreen implements Screen {
         }
 
         // Create map and background layer(0)
-        /*
+
         map = new TiledMap();
         MapLayers layers = map.getLayers();
         TiledMapTileLayer background = getTiledMapTileLayer();
         layers.add(background);
         layers.add(new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize));
-        */
+
 
         // ****Loads the premade map instead****
-        map = new TmxMapLoader().load("untitled.tmx");
+        // map = new TmxMapLoader().load("untitled.tmx");
         // *************************************
 
         // add a new empty layer for tile selector
