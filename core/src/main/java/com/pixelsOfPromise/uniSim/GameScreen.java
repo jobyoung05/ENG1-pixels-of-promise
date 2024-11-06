@@ -14,7 +14,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.Vector3;
 
@@ -42,6 +45,7 @@ public class GameScreen implements Screen {
     private Stage buttonStage;
     private int currentLayer = 0;
     private int[] lastHoveredTile = {0,0};
+    private UIButton currentButton;
 
     // Building related stuff
     private BuildingManager buildingManager;
@@ -57,9 +61,6 @@ public class GameScreen implements Screen {
         this.game = game;
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
-
-        // Initialize HighlightTiles with tile size 16
-        highlightTiles = new HighlightTiles();
 
         // Creates the camera and sets the viewpoint
         camera = new OrthographicCamera();
@@ -89,11 +90,13 @@ public class GameScreen implements Screen {
         }
 
         // Create map and background layer(0)
+        /*
         map = new TiledMap();
         MapLayers layers = map.getLayers();
         TiledMapTileLayer background = getTiledMapTileLayer();
         layers.add(background);
         layers.add(new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize));
+        */
 
         // ****Loads the premade map instead****
         map = new TmxMapLoader().load("untitled.tmx");
@@ -103,6 +106,9 @@ public class GameScreen implements Screen {
         map.getLayers().add(new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize));
         // Initialize the renderer with the map we just created
         renderer = new OrthogonalTiledMapRenderer(map);
+
+        // Initialize HighlightTiles
+        highlightTiles = new HighlightTiles((TiledMapTileLayer) map.getLayers().get(2), textureRegions);
 
         // Buildings
         buildingManager = new BuildingManager("buildings.json");
@@ -114,6 +120,15 @@ public class GameScreen implements Screen {
         availableBuildings[1].setLocation(10,10);
         availableBuildings[0].addToLayer(map, textureRegions);
         availableBuildings[1].addToLayer(map, textureRegions);
+
+        UIButton b = new UIButton(buttonStage, "Accommodation", 0, (int) height-32, 128, 32);
+        b.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                isPlacing = !isPlacing;
+                currentButton = b;
+            }
+        });
+
     }
 
     private TiledMapTileLayer getTiledMapTileLayer() {
@@ -137,15 +152,16 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(100f / 255f, 100f / 255f, 250f / 255f, 1f);
         updateSelectionLayer();
 
-
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(2);
         Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
-
+        //Switches the layer viewed for debugging
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L) && map.getLayers().getCount() > 1) {
+            currentLayer = (currentLayer == 0) ? 1 : 0;  // Toggle between layer 0 and 1
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
             if (isPlacing) {
                 isPlacing = false;
-                highlightTiles.clearHighlight(layer, worldCoordinates, buildingManager.getBuilding("accommodation"));
+                highlightTiles.clearHighlight( worldCoordinates, buildingManager.getBuilding("accommodation"));
                 // maybe it would be better to pass in an oject that already has all of these things? or if not all of it
                 // definitely the size, textures to be used, etc. like this works fine for a simple colour of size n*m
                 // would not work so well for a building with different tiles being used
@@ -154,9 +170,17 @@ public class GameScreen implements Screen {
                 isPlacing = true;
             }
         }
+        if (Gdx.input.isTouched()){
+            isPlacing = false;
+            highlightTiles.clearHighlight(worldCoordinates, buildingManager.getBuilding("accommodation"));
+            if (currentButton != null){
+                currentButton.setChecked(false);
+            }
+        }
+
 
         if (isPlacing) {
-            highlightTiles.updateHighlight(layer, worldCoordinates, textureRegions, buildingManager.getBuilding("accommodation"));
+            highlightTiles.updateHighlight(worldCoordinates, buildingManager.getBuilding("accommodation"));
         }
 
         // Render the map
@@ -165,11 +189,6 @@ public class GameScreen implements Screen {
         renderer.render();
 
         timer.add(delta);
-
-        //Switches the layer viewed for debugging
-        if (Gdx.input.isKeyJustPressed(Input.Keys.L) && map.getLayers().getCount() > 1) {
-            currentLayer = (currentLayer == 0) ? 1 : 0;  // Toggle between layer 0 and 1
-        }
 
         // Get tile information
         TileInfo tileInfo = getCurrentTileInfo();
@@ -190,6 +209,8 @@ public class GameScreen implements Screen {
         game.batch.begin();
         game.font.draw(game.batch, debugString, 10, 20);
         game.batch.end();
+
+        buttonStage.draw();
     }
 
     @Override

@@ -1,33 +1,42 @@
 package com.pixelsOfPromise.uniSim;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 
-public class UIButton {
-    private TextButton button;
-
-    public UIButton(String text, Stage stage) {
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+public class UIButton extends TextButton{
+    static private TextButton.TextButtonStyle style;
+    static {
+        // style only needs defining once, not every time a UIButton instance is created
+        // so we define style in a static block (which will only run once)
+        style = new TextButton.TextButtonStyle();
         style.font = new BitmapFont();
-
-        //Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-        /*
-        BitmapFont font = new BitmapFont();
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons/buttons.pack"));
-        skin.addRegions(atlas);
-        style.font = font;
-        style.up = skin.getDrawable("up-button");
-        style.down = skin.getDrawable("down-button");
-        style.checked = skin.getDrawable("checked-button");
-        */
-        button = new TextButton(text, style);
-        button.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-        stage.addActor(button);
+        Skin skin = new Skin();
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        skin.add("white", new Texture(pixmap));
+        skin.add("default", new BitmapFont());
+        style.up = skin.newDrawable("white", Color.LIGHT_GRAY);
+        style.down = skin.newDrawable("white", Color.DARK_GRAY);
+        style.over = skin.newDrawable("white", Color.LIGHT_GRAY);
+        style.checked = skin.newDrawable("white", Color.DARK_GRAY);
     }
+
+    public UIButton(Stage stage, String text, int x, int y, int w, int h) {
+        super(text, style);
+        this.setPosition(x, y);
+        this.setSize(w, h);
+        stage.addActor(this);
+    }
+
 }
