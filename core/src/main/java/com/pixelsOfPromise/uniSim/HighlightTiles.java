@@ -7,10 +7,17 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.utils.Array;
 
 public class HighlightTiles {
-    private int tileSize = 16;
+    private final int tileSize = 16;
     private Array<int[]> lastHoveredTiles = new Array<>(); // Track all highlighted tiles
+    static private TiledMapTileLayer layer = null;
+    static private TextureRegion[] textureRegions = null;
 
-    public void updateHighlight(TiledMapTileLayer layer, Vector3 worldCoordinates, TextureRegion[] textureRegions, Building building) {
+    public HighlightTiles(TiledMapTileLayer layer, TextureRegion[] textureRegions) {
+        this.layer = layer;
+        this.textureRegions = textureRegions;
+    }
+
+    public void updateHighlight(Vector3 worldCoordinates, Building building) {
         // Calculate the center tile coordinates from mouse position
         int tileX = (int) (worldCoordinates.x / tileSize);
         int tileY = (int) (worldCoordinates.y / tileSize);
@@ -44,7 +51,7 @@ public class HighlightTiles {
     }
 
 
-    public void clearHighlight(TiledMapTileLayer layer, Vector3 worldCoordinates, Building building) {
+    public void clearHighlight(Vector3 worldCoordinates, Building building) {
         for (int[] tile : lastHoveredTiles) {
             layer.setCell(tile[0], tile[1], null);
         }

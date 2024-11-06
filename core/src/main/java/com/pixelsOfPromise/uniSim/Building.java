@@ -12,6 +12,21 @@ public class Building {
     private int x;
     private int y;
 
+    public Building() {}
+
+    public Building(Building other) {
+        this.name = other.name;
+        this.cost = other.cost;
+        this.setLocation(0,0);
+        this.tileInfoArray = new TileInfo[other.tileInfoArray.length][];
+        for (int i = 0; i < other.tileInfoArray.length; i++) {
+            this.tileInfoArray[i] = new TileInfo[other.tileInfoArray[i].length];
+            for (int j = 0; j < other.tileInfoArray[i].length; j++) {
+                this.tileInfoArray[i][j] = new TileInfo(other.tileInfoArray[i][j]);
+            }
+        }
+    }
+
     // Getters and Setters
     public String getName() {
         return name;
@@ -59,22 +74,6 @@ public class Building {
                 layer.setCell(x + k, y + (tileInfoArray.length - 1 - j), cell);
             }
         }
-    }
-
-    public Building(Building other) {
-        this.name = other.name;
-        this.cost = other.cost;
-        this.setLocation(0,0);
-        this.tileInfoArray = new TileInfo[other.tileInfoArray.length][];
-        for (int i = 0; i < other.tileInfoArray.length; i++) {
-            this.tileInfoArray[i] = new TileInfo[other.tileInfoArray[i].length];
-            for (int j = 0; j < other.tileInfoArray[i].length; j++) {
-                this.tileInfoArray[i][j] = new TileInfo(other.tileInfoArray[i][j]);
-            }
-        }
-    }
-
-    public Building() {
     }
 
     public void setLocation(int x, int y) {
