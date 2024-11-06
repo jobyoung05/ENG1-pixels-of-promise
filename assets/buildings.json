@@ -6,91 +6,91 @@
             "TileInfoArray": [
                 [
                     {
-                        "value": 72
+                        "id": 72
                     },
                     {
-                        "value": 74
+                        "id": 74
                     },
                     {
-                        "value": 74
+                        "id": 74
                     },
                     {
-                        "value": 74
+                        "id": 74
                     },
                     {
-                        "value": 72,
-                        "flag1": true,
-                        "flag2": false
+                        "id": 72,
+                        "isFlippedH": true,
+                        "isFlippedV": false
                     }
                 ],
                 [
                     {
-                        "value": 136
+                        "id": 136
                     },
                     {
-                        "value": 5
+                        "id": 5
                     },
                     {
-                        "value": 81
+                        "id": 81
                     },
                     {
-                        "value": 5
+                        "id": 5
                     },
                     {
-                        "value": 80,
-                        "flag1": true,
-                        "flag2": false
+                        "id": 80,
+                        "isFlippedH": true,
+                        "isFlippedV": false
                     }
                 ],
                 [
                     {
-                        "value": 160
+                        "id": 160
                     },
                     {
-                        "value": 156
+                        "id": 156
                     },
                     {
-                        "value": 156
+                        "id": 156
                     },
                     {
-                        "value": 156
+                        "id": 156
                     },
                     {
-                        "value": 153
+                        "id": 153
                     }
                 ],
                 [
                     {
-                        "value": 160
+                        "id": 160
                     },
                     {
-                        "value": 157
+                        "id": 157
                     },
                     {
-                        "value": 157
+                        "id": 157
                     },
                     {
-                        "value": 157
+                        "id": 157
                     },
                     {
-                        "value": 153
+                        "id": 153
                     }
                 ],
                 [
                     {
-                        "value": 160
+                        "id": 160
                     },
                     {
-                        "value": 162
+                        "id": 162
                     },
                     {
-                        "value": 162
+                        "id": 162
                     },
                     {
-                        "value": 162
+                        "id": 162
                     },
                     {
-                        "value": 153
+                        "id": 153
                     }
                 ]
             ]

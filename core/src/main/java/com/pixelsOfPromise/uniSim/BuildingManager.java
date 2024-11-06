@@ -36,14 +36,14 @@ public class BuildingManager {
                 JsonValue rowJson = tileArrayJson.get(row);
                 for (int col = 0; col < cols; col++) {
                     JsonValue tileJson = rowJson.get(col);
-                    int value = tileJson.getInt("value");
-                    Boolean flag1 = tileJson.has("flag1") ? tileJson.getBoolean("flag1") : null;
-                    Boolean flag2 = tileJson.has("flag2") ? tileJson.getBoolean("flag2") : null;
+                    int id = tileJson.getInt("id");
+                    Boolean isFlippedH = tileJson.has("isFlippedH") ? tileJson.getBoolean("isFlippedH") : null;
+                    Boolean isFlippedV = tileJson.has("isFlippedV") ? tileJson.getBoolean("isFlippedV") : null;
 
-                    if (flag1 == null || flag2 == null) {
-                        tileInfoArray[row][col] = new TileInfo(value);
+                    if (isFlippedH == null || isFlippedV == null) {
+                        tileInfoArray[row][col] = new TileInfo(id);
                     } else {
-                        tileInfoArray[row][col] = new TileInfo(value, flag1, flag2);
+                        tileInfoArray[row][col] = new TileInfo(id, isFlippedH, isFlippedV);
                     }
                 }
             }
