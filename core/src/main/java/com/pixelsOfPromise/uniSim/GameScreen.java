@@ -113,13 +113,6 @@ public class GameScreen implements Screen {
         // Buildings
         buildingManager = new BuildingManager("buildings.json", textureRegions);
 
-        availableBuildings[0] = buildingManager.createBuilding("accommodation", 1000);
-        availableBuildings[1] = buildingManager.createBuilding("accommodation", 1000);
-        availableBuildings[0].setLocation(34, 28);
-        availableBuildings[1].setLocation(10,10);
-        availableBuildings[0].addToLayer(map);
-        availableBuildings[1].addToLayer(map);
-
         UIButton b = new UIButton(buttonStage, "Accommodation", 0, (int) height-32, 128, 32);
         b.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
@@ -169,12 +162,23 @@ public class GameScreen implements Screen {
                 isPlacing = true;
             }
         }
-        if (Gdx.input.isTouched() && Gdx.input.getY() > 64){
-            isPlacing = false;
-            highlightTiles.clearHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
-            if (currentButton != null){
-                currentButton.setChecked(false);
+        if (isPlacing) {
+            highlightTiles.updateHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
+            // The key escape will deselect the building and refresh the button
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+                if (currentButton != null){
+                    currentButton.setChecked(false);
+                }
+                isPlacing = false;
+                highlightTiles.clearHighlight( worldCoordinates, buildingManager.createBuilding("accommodation", 0));
             }
+            if (Gdx.input.isTouched()){
+                availableBuildings[0] = buildingManager.createBuilding("accommodation", 1000);
+                availableBuildings[0].setLocation((int) worldCoordinates.x / tileSize, (int) worldCoordinates.y / tileSize);
+                availableBuildings[0].addToLayer(map);
+            }
+
+
         }
 
 

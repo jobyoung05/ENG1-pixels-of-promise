@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Vector3;
 
 public class Building {
     private String name;
@@ -54,4 +55,16 @@ public class Building {
     public TiledMapTileLayer.Cell[][] getCells() {
         return cells;
     }
+
+    private boolean isPlacementValid(Vector3 worldCoordinates, TiledMap map){
+        Boolean isValid = false;
+
+        if (getCost() == 1) {
+
+        }
+
+
+        return isValid;
+    }
+
 }
