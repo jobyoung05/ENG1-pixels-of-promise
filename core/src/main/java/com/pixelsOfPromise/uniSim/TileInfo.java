@@ -1,11 +1,12 @@
 package com.pixelsOfPromise.uniSim;
 
 public class TileInfo {
-    public int id;
-    public boolean isFlippedH;
-    public boolean isFlippedV;
-    public int rotation;
+    private final int id;
+    private final boolean isFlippedH;
+    private final boolean isFlippedV;
+    private final int rotation;
 
+    // Constructors
     public TileInfo(int id, boolean isFlippedH, boolean isFlippedV, int rotation) {
         this.id = id;
         this.isFlippedH = isFlippedH;
@@ -14,25 +15,33 @@ public class TileInfo {
     }
 
     public TileInfo(int id, boolean isFlippedH, boolean isFlippedV) {
-        this.id = id;
-        this.isFlippedH = isFlippedH;
-        this.isFlippedV = isFlippedV;
-        this.rotation = 0;
+        this(id, isFlippedH, isFlippedV, 0);
     }
 
     public TileInfo(int id) {
-        this.id = id;
-        this.isFlippedH = false;
-        this.isFlippedV = false;
-        this.rotation = 0;
+        this(id, false, false, 0);
     }
 
     // Copy constructor
     public TileInfo(TileInfo other) {
-        this.id = other.id;
-        this.isFlippedH = other.isFlippedH;
-        this.isFlippedV = other.isFlippedV;
-        this.rotation = 0;
+        this(other.id, other.isFlippedH, other.isFlippedV, other.rotation);
+    }
+
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public boolean isFlippedH() {
+        return isFlippedH;
+    }
+
+    public boolean isFlippedV() {
+        return isFlippedV;
+    }
+
+    public int getRotation() {
+        return rotation;
     }
 
 }

@@ -8,21 +8,23 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 public class Building {
     private String name;
     private int cost;
-    private TileInfo[][] tileInfoArray;
+    private TiledMapTileLayer.Cell[][] cells;
     private int x;
     private int y;
 
-    public Building() {}
+    // Constructor for creating a Building instance
+    public Building(String name, int cost, TiledMapTileLayer.Cell[][] cells) {
+        this.name = name;
+        this.cost = cost;
+        this.cells = cells;
+    }
 
-    public Building(Building other) {
-        this.name = other.name;
-        this.cost = other.cost;
-        this.setLocation(0,0);
-        this.tileInfoArray = new TileInfo[other.tileInfoArray.length][];
-        for (int i = 0; i < other.tileInfoArray.length; i++) {
-            this.tileInfoArray[i] = new TileInfo[other.tileInfoArray[i].length];
-            for (int j = 0; j < other.tileInfoArray[i].length; j++) {
-                this.tileInfoArray[i][j] = new TileInfo(other.tileInfoArray[i][j]);
+    // Adds the building's pre-created cells to the map layer
+    public void addToLayer(TiledMap map) {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
+        for (int j = 0; j < cells.length; j++) {
+            for (int k = 0; k < cells[j].length; k++) {
+                layer.setCell(x + k, y + (cells.length - 1 - j), cells[j][k]);
             }
         }
     }
@@ -44,40 +46,12 @@ public class Building {
         this.cost = cost;
     }
 
-    public TileInfo[][] getTileInfoArray() {
-        return tileInfoArray;
-    }
-
-    public void setTileInfoArray(TileInfo[][] tileInfoArray) {
-        this.tileInfoArray = tileInfoArray;
-    }
-
-    // TODO
-    // can this be used to highlight tiles? we can store the past positions of the tiles
-    // then we can use this to easily move and place buildings??  saves having to use highlight tiles.java
-    public void addToLayer(TiledMap map, TextureRegion[] textureRegions) {
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
-        for (int j = 0; j < tileInfoArray.length; j++) {
-            for (int k = 0; k < tileInfoArray[j].length; k++) {
-
-                TileInfo currentTileInfo = tileInfoArray[j][k];
-
-                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[currentTileInfo.id]);
-                tile.setId(currentTileInfo.id);  // Explicitly setting the tile ID
-                cell.setTile(tile);
-                cell.setFlipHorizontally(currentTileInfo.isFlippedH);
-                cell.setFlipVertically(currentTileInfo.isFlippedV);
-                cell.setRotation(currentTileInfo.rotation);
-
-                // Ensures that the building is placed with the x,y being in the bottom-left corner
-                layer.setCell(x + k, y + (tileInfoArray.length - 1 - j), cell);
-            }
-        }
-    }
-
     public void setLocation(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public TiledMapTileLayer.Cell[][] getCells() {
+        return cells;
     }
 }
