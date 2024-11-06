@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Array;
 public class HighlightTiles {
     private final int tileSize = 16;
     private Array<int[]> lastHoveredTiles = new Array<>(); // Track all highlighted tiles
-    static private TiledMapTileLayer layer = null;
-    static private TextureRegion[] textureRegions = null;
+    private TiledMapTileLayer layer = null;
+    private TextureRegion[] textureRegions = null;
 
     public HighlightTiles(TiledMapTileLayer layer, TextureRegion[] textureRegions) {
         this.layer = layer;
