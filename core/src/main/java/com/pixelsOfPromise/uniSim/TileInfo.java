@@ -1,10 +1,10 @@
 package com.pixelsOfPromise.uniSim;
 
 public class TileInfo {
-    public int id;
-    public boolean isFlippedH;
-    public boolean isFlippedV;
-    public int rotation;
+    private final int id;
+    private final boolean isFlippedH;
+    private final boolean isFlippedV;
+    private final int rotation;
 
     // Constructors
     public TileInfo(int id, boolean isFlippedH, boolean isFlippedV, int rotation) {

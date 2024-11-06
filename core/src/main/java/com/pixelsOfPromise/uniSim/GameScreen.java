@@ -197,10 +197,10 @@ public class GameScreen implements Screen {
 
         String debugString = "FPS: " + Gdx.graphics.getFramesPerSecond() + "  "
             + "Layer: " + currentLayer + "  "
-            + "Cell ID: " + tileInfo.id + "  ("
-            + (tileInfo.isFlippedH ? "H, " : "")
-            + (tileInfo.isFlippedV ? "V, " : "")
-            + tileInfo.rotation + ") "
+            + "Cell ID: " + tileInfo.getId() + "  ("
+            + (tileInfo.isFlippedH() ? "H, " : "")
+            + (tileInfo.isFlippedV() ? "V, " : "")
+            + tileInfo.getRotation() + ") "
             + "Position: " + tileX + ", " + tileY + " "
             + "Timer:" + timer.getTimeUI();
 
