@@ -124,7 +124,7 @@ public class GameScreen implements Screen {
         b.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 isPlacing = !isPlacing;
-                currentButton = b;
+                currentButton = isPlacing ? b : null;
             }
         });
 
@@ -169,7 +169,7 @@ public class GameScreen implements Screen {
                 isPlacing = true;
             }
         }
-        if (Gdx.input.isTouched()){
+        if (Gdx.input.isTouched() && Gdx.input.getY() > 64){
             isPlacing = false;
             highlightTiles.clearHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
             if (currentButton != null){
