@@ -108,18 +108,17 @@ public class GameScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         // Initialize HighlightTiles
-        highlightTiles = new HighlightTiles((TiledMapTileLayer) map.getLayers().get(2), textureRegions);
+        highlightTiles = new HighlightTiles((TiledMapTileLayer) map.getLayers().get(2));
 
         // Buildings
-        buildingManager = new BuildingManager("buildings.json");
+        buildingManager = new BuildingManager("buildings.json", textureRegions);
 
-        availableBuildings[0] = buildingManager.getBuildingInstance("accommodation");
-        availableBuildings[1] = buildingManager.getBuildingInstance("accommodation");
-//        System.out.println(Arrays.toString(availableBuildings));
+        availableBuildings[0] = buildingManager.createBuilding("accommodation", 1000);
+        availableBuildings[1] = buildingManager.createBuilding("accommodation", 1000);
         availableBuildings[0].setLocation(34, 28);
         availableBuildings[1].setLocation(10,10);
-        availableBuildings[0].addToLayer(map, textureRegions);
-        availableBuildings[1].addToLayer(map, textureRegions);
+        availableBuildings[0].addToLayer(map);
+        availableBuildings[1].addToLayer(map);
 
         UIButton b = new UIButton(buttonStage, "Accommodation", 0, (int) height-32, 128, 32);
         b.addListener(new ChangeListener() {
@@ -161,7 +160,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
             if (isPlacing) {
                 isPlacing = false;
-                highlightTiles.clearHighlight( worldCoordinates, buildingManager.getBuilding("accommodation"));
+                highlightTiles.clearHighlight( worldCoordinates, buildingManager.createBuilding("accommodation", 0));
                 // maybe it would be better to pass in an oject that already has all of these things? or if not all of it
                 // definitely the size, textures to be used, etc. like this works fine for a simple colour of size n*m
                 // would not work so well for a building with different tiles being used
@@ -172,7 +171,7 @@ public class GameScreen implements Screen {
         }
         if (Gdx.input.isTouched()){
             isPlacing = false;
-            highlightTiles.clearHighlight(worldCoordinates, buildingManager.getBuilding("accommodation"));
+            highlightTiles.clearHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
             if (currentButton != null){
                 currentButton.setChecked(false);
             }
@@ -180,7 +179,7 @@ public class GameScreen implements Screen {
 
 
         if (isPlacing) {
-            highlightTiles.updateHighlight(worldCoordinates, buildingManager.getBuilding("accommodation"));
+            highlightTiles.updateHighlight(worldCoordinates, buildingManager.createBuilding("accommodation",0));
         }
 
         // Render the map
