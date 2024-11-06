@@ -7,7 +7,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -17,16 +16,9 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.Vector3;
 
-import java.util.Arrays;
-
-
-// TODO
-// create an array of Buildings that are available, and an array of Buildings that are being used. this would make
-// limits easy to introduce, as well as making it easy to pass into HighlightTiles (hopefully)
 
 public class GameScreen implements Screen {
     final UniSim game;
@@ -68,6 +60,8 @@ public class GameScreen implements Screen {
         camera.update();
         // Creates the camera controller
         cameraController = new OrthoCamController(camera, width, height);
+
+        // Buttons and input
         buttonStage = new Stage();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(cameraController);
@@ -120,36 +114,20 @@ public class GameScreen implements Screen {
         availableBuildings[0].addToLayer(map);
         availableBuildings[1].addToLayer(map);
 
-        UIButton b = new UIButton(buttonStage, "Accommodation", 0, (int) height-32, 128, 32);
-        b.addListener(new ChangeListener() {
+        UIButton accommodationButton = new UIButton(buttonStage, "Accommodation", 0, (int) height-32, 128, 32);
+        accommodationButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 isPlacing = !isPlacing;
-                currentButton = isPlacing ? b : null;
+                currentButton = isPlacing ? accommodationButton : null;
             }
         });
-
-    }
-
-    private TiledMapTileLayer getTiledMapTileLayer() {
-        TiledMapTileLayer background = new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize);
-        int tileId = 95;
-        for (int x = 0; x < 60; x++) {
-            for (int y = 0; y < 36; y++) {
-                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-                StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[tileId]);
-                tile.setId(tileId);  // Explicitly setting the tile ID
-                cell.setTile(tile);
-                background.setCell(x, y, cell);
-
-            }
-        }
-        return background;
     }
 
     @Override
     public void render(float delta) {
+        timer.add(delta);
+
         ScreenUtils.clear(100f / 255f, 100f / 255f, 250f / 255f, 1f);
-        updateSelectionLayer();
 
         Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
@@ -176,18 +154,9 @@ public class GameScreen implements Screen {
                 currentButton.setChecked(false);
             }
         }
-
-
         if (isPlacing) {
             highlightTiles.updateHighlight(worldCoordinates, buildingManager.createBuilding("accommodation",0));
         }
-
-        // Render the map
-        camera.update();
-        renderer.setView(camera);
-        renderer.render();
-
-        timer.add(delta);
 
         // Get tile information
         TileInfo tileInfo = getCurrentTileInfo();
@@ -204,12 +173,19 @@ public class GameScreen implements Screen {
             + "Position: " + tileX + ", " + tileY + " "
             + "Timer:" + timer.getTimeUI();
 
+        updateSelectionLayer(worldCoordinates);
+
         // Render the FPS
         game.batch.begin();
         game.font.draw(game.batch, debugString, 10, 20);
         game.batch.end();
 
         buttonStage.draw();
+
+        // Render the map
+        camera.update();
+        renderer.setView(camera);
+        renderer.render();
     }
 
     @Override
@@ -264,9 +240,7 @@ public class GameScreen implements Screen {
         return new TileInfo(id, isFlippedH, isFlippedV, rotation);
     }
 
-    private void updateSelectionLayer(){
-        // Get the mouse screen coordinates
-        Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+    private void updateSelectionLayer(Vector3 worldCoordinates){
         // Convert world coordinates to tile coordinates
         int tileX = (int) (worldCoordinates.x / tileSize);
         int tileY = (int) (worldCoordinates.y / tileSize);
