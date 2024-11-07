@@ -162,6 +162,7 @@ public class GameScreen implements Screen {
 
         // Handle touch or mouse click for placing buildings
         if (isPlacing && Gdx.input.isTouched() && Gdx.input.getY() > 64) {
+            togglePlacingMode();
             placeBuilding(worldCoordinates);
         }
     }
