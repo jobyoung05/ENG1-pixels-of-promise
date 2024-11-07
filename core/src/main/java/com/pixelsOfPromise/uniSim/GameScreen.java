@@ -129,8 +129,11 @@ public class GameScreen implements Screen {
         accommodationButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 swapPlacementButton(accommodationButton);
+
+                currentBuildingBeingPlaced = buildingManager.createBuilding("accommodation", 1000);
             }
         });
+
         UIButton teachingButton = new UIButton(buttonStage, "Teaching", "teaching", 0, (int) height-64, 128, 32);
         teachingButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {

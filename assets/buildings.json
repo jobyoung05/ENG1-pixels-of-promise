@@ -2,6 +2,7 @@
     "buildings": {
         "accommodation": {
             "name": "accommodation",
+            "type": "PLACE_TO_SLEEP",
             "cost": 10,
             "TileInfoArray": [
                 [
@@ -97,6 +98,7 @@
         },
       "teaching": {
         "name": "teaching",
+        "type": "PLACE_TO_LEARN",
         "cost": 20,
         "TileInfoArray": [
           [

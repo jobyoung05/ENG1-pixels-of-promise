@@ -8,17 +8,52 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public class BuildingManager {
-    private final Map<String, TileInfo[][]> buildingData;
+    private final Map<String, BuildingData> buildingDataMap;
     private final TextureRegion[] textureRegions;
+    private final EnumMap<BuildingType, Integer> buildingCounts;
+    private final EnumMap<BuildingType, Integer> buildingLimits;
 
     public BuildingManager(String jsonFilePath, TextureRegion[] textureRegions) {
         this.textureRegions = textureRegions;
-        this.buildingData = new HashMap<>();
+        this.buildingDataMap = new HashMap<>();
+        this.buildingCounts = new EnumMap<>(BuildingType.class);
+        this.buildingLimits = new EnumMap<>(BuildingType.class);
+        initializeBuildingCounts();
         loadBuildingData(jsonFilePath);
+    }
+
+    // Inner class to hold building data
+    private static class BuildingData {
+        String name;
+        BuildingType type;
+        int cost;
+        TileInfo[][] tileInfoArray;
+
+        BuildingData(String name, BuildingType type, int cost, TileInfo[][] tileInfoArray) {
+            this.name = name;
+            this.type = type;
+            this.cost = cost;
+            this.tileInfoArray = tileInfoArray;
+        }
+    }
+
+    // Initialize building counts and set limits
+    private void initializeBuildingCounts() {
+        for (BuildingType type : BuildingType.values()) {
+            buildingCounts.put(type, 0);
+        }
+        // Set limits per building type
+        buildingLimits.put(BuildingType.PLACE_TO_SLEEP, 100);
+        buildingLimits.put(BuildingType.PLACE_TO_LEARN, 1);
+        buildingLimits.put(BuildingType.PLACE_TO_EAT, 1);
+        buildingLimits.put(BuildingType.RECREATIONAL_ACTIVITY, 1);
     }
 
     // Load building data from a JSON file, but do not create Building instances yet
@@ -30,10 +65,12 @@ public class BuildingManager {
         JsonValue buildingsJson = root.get("buildings");
         for (JsonValue buildingJson : buildingsJson) {
             String name = buildingJson.getString("name");
-
-            // Parse TileInfoArray and store it in the map
+            String typeStr = buildingJson.getString("type");
+            BuildingType type = BuildingType.valueOf(typeStr.toUpperCase());
+            int cost = buildingJson.getInt("cost");
             TileInfo[][] tileInfoArray = parseTileInfoArray(buildingJson.get("TileInfoArray"));
-            buildingData.put(name, tileInfoArray);
+
+            buildingDataMap.put(name, new BuildingData(name, type, cost, tileInfoArray));
         }
     }
 
@@ -58,16 +95,37 @@ public class BuildingManager {
         return tileInfoArray;
     }
 
-    // Create a new Building instance on demand
+    // Create a new Building instance on demand with limit checks
     public Building createBuilding(String name, int cost) {
-        TileInfo[][] tileInfoArray = buildingData.get(name);
-        if (tileInfoArray == null) {
-            return null; // Building data not found
+        BuildingData data = buildingDataMap.get(name);
+        if (data == null) {
+            Gdx.app.error("BuildingManager", "Building data not found for: " + name);
+            return null;
         }
 
+        // Check if the building limit for this type has been reached
+        BuildingType type = data.type;
+
+        if (buildingCounts.get(type) >= buildingLimits.get(type)) {
+            Gdx.app.log("BuildingManager", "Cannot create more buildings of type: " + type);
+            return null;
+        }
+
+        // Increment the building count
+        buildingCounts.put(type, buildingCounts.get(type) + 1);
+
         // Convert TileInfo array to Cell array
-        TiledMapTileLayer.Cell[][] cells = createCells(tileInfoArray);
-        return new Building(name, cost, cells);
+        TiledMapTileLayer.Cell[][] cells = createCells(data.tileInfoArray);
+
+        return new Building(data.name, data.cost, cells, type);
+    }
+
+    // Method to decrement building count when a building is removed
+    public void removeBuilding(Building building) {
+        BuildingType type = building.getType();
+        if (buildingCounts.get(type) > 0) {
+            buildingCounts.put(type, buildingCounts.get(type) - 1);
+        }
     }
 
     // Helper method to create cells from TileInfo data
@@ -94,5 +152,4 @@ public class BuildingManager {
         cell.setRotation(tileInfo.getRotation());
         return cell;
     }
-
 }
