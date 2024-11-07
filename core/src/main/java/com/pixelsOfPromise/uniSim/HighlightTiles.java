@@ -35,7 +35,7 @@ public class HighlightTiles {
         }
     }
 
-    public void clearHighlight(Vector3 worldCoordinates, Building building) {
+    public void clearHighlight() {
         for (int[] tile : lastHoveredTiles) {
             layer.setCell(tile[0], tile[1], null);
         }
