@@ -35,12 +35,14 @@ public class BuildingManager {
         BuildingType type;
         int cost;
         TileInfo[][] tileInfoArray;
+        TiledMapTileLayer.Cell[][] cells;
 
-        BuildingData(String name, BuildingType type, int cost, TileInfo[][] tileInfoArray) {
+        BuildingData(String name, BuildingType type, int cost, TileInfo[][] tileInfoArray, TiledMapTileLayer.Cell[][] cells) {
             this.name = name;
             this.type = type;
             this.cost = cost;
             this.tileInfoArray = tileInfoArray;
+            this.cells = cells;
         }
     }
 
@@ -69,8 +71,9 @@ public class BuildingManager {
             BuildingType type = BuildingType.valueOf(typeStr.toUpperCase());
             int cost = buildingJson.getInt("cost");
             TileInfo[][] tileInfoArray = parseTileInfoArray(buildingJson.get("TileInfoArray"));
+            TiledMapTileLayer.Cell[][] cells = createCells(tileInfoArray);
 
-            buildingDataMap.put(name, new BuildingData(name, type, cost, tileInfoArray));
+            buildingDataMap.put(name, new BuildingData(name, type, cost, tileInfoArray, cells));
         }
     }
 
@@ -118,6 +121,10 @@ public class BuildingManager {
         TiledMapTileLayer.Cell[][] cells = createCells(data.tileInfoArray);
 
         return new Building(data.name, data.cost, cells, type);
+    }
+
+    public TiledMapTileLayer.Cell[][] getBuildingCells(String name) {
+        return buildingDataMap.get(name).cells;
     }
 
     // Method to decrement building count when a building is removed

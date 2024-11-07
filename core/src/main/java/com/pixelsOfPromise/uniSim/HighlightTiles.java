@@ -13,7 +13,7 @@ public class HighlightTiles {
         this.layer = layer;
     }
 
-    public void updateHighlight(Vector3 worldCoordinates, Building building) {
+    public void updateHighlight(Vector3 worldCoordinates, TiledMapTileLayer.Cell[][] cells) {
         // Calculate the center tile coordinates from mouse position
         int tileX = (int) (worldCoordinates.x / tileSize);
         int tileY = (int) (worldCoordinates.y / tileSize);
@@ -24,8 +24,6 @@ public class HighlightTiles {
         }
         lastHoveredTiles.clear();
 
-
-        TiledMapTileLayer.Cell[][] cells = building.getCells();
         for (int j = 0; j < cells.length; j++) {
             for (int k = 0; k < cells[j].length; k++) {
                 // Ensures that the building is placed with the x,y being in the bottom-left corner

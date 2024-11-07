@@ -53,6 +53,7 @@ public class GameScreen implements Screen {
     private List<Building> availableBuildings = new ArrayList<>();
     private List<Building> placedBuildings = new ArrayList<>();
     private Building currentBuildingBeingPlaced;
+    private String currentBuildingBeingPlacedName;
     private HighlightTiles highlightTiles;
 
 
@@ -111,26 +112,13 @@ public class GameScreen implements Screen {
         // Buildings
         buildingManager = new BuildingManager("buildings.json", textureRegions);
 
-//        Building building1 = buildingManager.createBuilding("accommodation", 1000);
-//        Building building2 = buildingManager.createBuilding("accommodation", 1000);
-//
-//        building1.setLocation(10, 10);
-//        building2.setLocation(35, 29);
-//
-//        placedBuildings.add(building1);
-//        placedBuildings.add(building2);
-//
-//        for (Building building : placedBuildings) {
-//            building.addToLayer(map);
-//        }
-
         // Setup UI button for accommodation
         UIButton accommodationButton = new UIButton(buttonStage, "Accommodation", "accommodation", 0, (int) height-32, 128, 32);
         accommodationButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 swapPlacementButton(accommodationButton);
 
-                currentBuildingBeingPlaced = buildingManager.createBuilding("accommodation", 1000);
+                currentBuildingBeingPlacedName = "accommodation";
             }
         });
 
@@ -139,7 +127,7 @@ public class GameScreen implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 swapPlacementButton(teachingButton);
 
-                currentBuildingBeingPlaced = buildingManager.createBuilding("teaching", 1);
+                currentBuildingBeingPlacedName = "teaching";
             }
         });
 
@@ -186,8 +174,8 @@ public class GameScreen implements Screen {
         updateSelectionLayer(worldCoordinates);
 
         // Update highlighting if placing is active
-        if (currentButton != null && currentBuildingBeingPlaced != null) {
-            highlightTiles.updateHighlight(worldCoordinates, currentBuildingBeingPlaced);
+        if (currentButton != null) {
+            highlightTiles.updateHighlight(worldCoordinates, buildingManager.getBuildingCells(currentBuildingBeingPlacedName));
         }
 
         // Get tile information
@@ -230,11 +218,15 @@ public class GameScreen implements Screen {
     }
 
     private void placeBuilding() {
+        currentBuildingBeingPlaced = buildingManager.createBuilding(currentBuildingBeingPlacedName, 1000);
+        if (currentBuildingBeingPlaced == null) {
+            return;
+        }
         // Validate placement location
         if (isValidPlacement(worldCoordinates)) {
             currentBuildingBeingPlaced.setLocation((int) worldCoordinates.x / TILE_SIZE, (int) worldCoordinates.y / TILE_SIZE);
             currentBuildingBeingPlaced.addToLayer(map);
-//            placedBuildings.add(currentBuildingBeingPlaced);
+            placedBuildings.add(currentBuildingBeingPlaced);
             currentBuildingBeingPlaced = null;
             if (currentButton != null) {
                 currentButton.setChecked(false);
