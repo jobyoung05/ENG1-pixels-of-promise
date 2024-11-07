@@ -127,7 +127,7 @@ public class GameScreen implements Screen {
         UIButton accommodationButton = new UIButton(buttonStage, "Accommodation", 0, (int) height-32, 128, 32);
         accommodationButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                isPlacing = !isPlacing;
+                togglePlacingMode();
                 currentButton = isPlacing ? accommodationButton : null;
             }
         });
