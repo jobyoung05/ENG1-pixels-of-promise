@@ -53,7 +53,6 @@ public class GameScreen implements Screen {
     private List<Building> availableBuildings = new ArrayList<>();
     private List<Building> placedBuildings = new ArrayList<>();
     private Building currentBuildingBeingPlaced;
-    private boolean isPlacing = false;
     private HighlightTiles highlightTiles;
 
 
@@ -100,6 +99,8 @@ public class GameScreen implements Screen {
         // Add a selection layer
         TiledMapTileLayer selectionLayer = new TiledMapTileLayer(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, TILE_SIZE);
         map.getLayers().add(selectionLayer);
+        selectionLayer.setOpacity(0.7f);
+        //map.getLayers().get(1).setVisible(false);
 
         // Initialize the renderer with the map we just created
         renderer = new OrthogonalTiledMapRenderer(map);
@@ -124,11 +125,16 @@ public class GameScreen implements Screen {
         }
 
         // Setup UI button for accommodation
-        UIButton accommodationButton = new UIButton(buttonStage, "Accommodation", 0, (int) height-32, 128, 32);
+        UIButton accommodationButton = new UIButton(buttonStage, "Accommodation", "accommodation", 0, (int) height-32, 128, 32);
         accommodationButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                togglePlacingMode();
-                currentButton = isPlacing ? accommodationButton : null;
+                swapPlacementButton(accommodationButton);
+            }
+        });
+        UIButton teachingButton = new UIButton(buttonStage, "Teaching", "teaching", 0, (int) height-64, 128, 32);
+        teachingButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                swapPlacementButton(teachingButton);
             }
         });
 
@@ -155,14 +161,8 @@ public class GameScreen implements Screen {
             currentLayer = (currentLayer == 0) ? 1 : 0;  // Toggle between layer 0 and 1
         }
 
-        // Toggle placing mode with H
-        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-            togglePlacingMode();
-        }
-
         // Handle touch or mouse click for placing buildings
-        if (isPlacing && Gdx.input.isTouched() && Gdx.input.getY() > 64) {
-            togglePlacingMode();
+        if (currentButton != null && Gdx.input.isTouched() && Gdx.input.getY() > 64) {
             placeBuilding(worldCoordinates);
         }
     }
@@ -181,8 +181,8 @@ public class GameScreen implements Screen {
         updateSelectionLayer(worldCoordinates);
 
         // Update highlighting if placing is active
-        if (isPlacing) {
-            highlightTiles.updateHighlight(worldCoordinates, buildingManager.createBuilding("accommodation",0));
+        if (currentButton != null) {
+            highlightTiles.updateHighlight(worldCoordinates, buildingManager.createBuilding(currentButton.getActionName(), 0));
         }
 
         // Get tile information
@@ -231,7 +231,6 @@ public class GameScreen implements Screen {
             newBuilding.setLocation((int) coordinates.x, (int) coordinates.y);
             newBuilding.addToLayer(map);
             placedBuildings.add(newBuilding);
-            isPlacing = false;
             if (currentButton != null) {
                 currentButton.setChecked(false);
                 currentButton = null;
@@ -244,13 +243,17 @@ public class GameScreen implements Screen {
         return true; // Placeholder
     }
 
-    private void togglePlacingMode() {
-        if (isPlacing) {
-            isPlacing = false;
-            highlightTiles.clearHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
-        } else {
-            isPlacing = true;
+    private void swapPlacementButton(UIButton button) {
+        if (currentButton != null){
+            currentButton.setChecked(false);
         }
+        if (button == currentButton){
+            currentButton = null;
+        }
+        else if (button != null) {
+            currentButton = button;
+        }
+        highlightTiles.clearHighlight();
     }
 
 
@@ -286,6 +289,7 @@ public class GameScreen implements Screen {
         map.dispose();
         tileTexture.dispose();
         buttonStage.dispose();
+
     }
 
     /**
