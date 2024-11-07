@@ -33,15 +33,8 @@ public class EndScreen implements Screen {
 
         game.batch.begin();
 
-        game.font.draw(game.batch, "Welcome to UniSim!!!", 100, 150);
-        game.font.draw(game.batch, "Tap anywhere to begin.", 100, 100);
-
+        game.font.draw(game.batch, "GAME OVER", 100, 150);
         game.batch.end();
-
-        if (Gdx.input.isTouched()) {
-            game.setScreen(new GameScreen(game));
-            dispose();
-        }
     }
 
     @Override

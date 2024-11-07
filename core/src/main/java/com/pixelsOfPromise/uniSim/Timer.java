@@ -27,8 +27,8 @@ public class Timer {
         if (getMinutes() < 1) {
             return getSeconds() + "s";
         }
-        else {
+        else{
             return getMinutes() + "m" + getSeconds() + "s";
+            }
         }
-    }
 }

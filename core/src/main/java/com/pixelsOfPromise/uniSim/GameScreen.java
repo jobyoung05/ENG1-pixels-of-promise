@@ -171,6 +171,11 @@ public class GameScreen implements Screen {
         // Update timer
         timer.add(Gdx.graphics.getDeltaTime());
 
+        if(timer.getSeconds() > 10){
+            game.setScreen(new EndScreen(game));
+            dispose();
+        }
+
         // Update the selection layer
         updateSelectionLayer(worldCoordinates);
 
