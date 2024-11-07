@@ -30,6 +30,7 @@ public class GameScreen implements Screen {
     private static final int TILE_SIZE = 16;
     private static final int MAP_WIDTH = 60;
     private static final int MAP_HEIGHT = 36;
+    private static final int SELECTION_TILE = 166;
 
     // Game state variables
     private boolean isPaused = false;
@@ -93,21 +94,13 @@ public class GameScreen implements Screen {
             }
         }
 
-        // Create map and background layer(0)
-        /*
-        map = new TiledMap();
-        MapLayers layers = map.getLayers();
-        TiledMapTileLayer background = getTiledMapTileLayer();
-        layers.add(background);
-        layers.add(new TiledMapTileLayer(mapWidth, mapHeight, TILE_SIZE, TILE_SIZE));
-        */
-
-        // ****Loads the premade map instead****
+        // Loads the premade map
         map = new TmxMapLoader().load("untitled.tmx");
-        // *************************************
 
-        // add a new empty layer for tile selector
-        map.getLayers().add(new TiledMapTileLayer(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, TILE_SIZE));
+        // Add a selection layer
+        TiledMapTileLayer selectionLayer = new TiledMapTileLayer(MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, TILE_SIZE);
+        map.getLayers().add(selectionLayer);
+
         // Initialize the renderer with the map we just created
         renderer = new OrthogonalTiledMapRenderer(map);
 
@@ -130,6 +123,7 @@ public class GameScreen implements Screen {
             building.addToLayer(map);
         }
 
+        // Setup UI button for accommodation
         UIButton accommodationButton = new UIButton(buttonStage, "Accommodation", 0, (int) height-32, 128, 32);
         accommodationButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
@@ -138,6 +132,7 @@ public class GameScreen implements Screen {
             }
         });
 
+        // Initialize world coordinates
         worldCoordinates = new Vector3();
     }
 
@@ -151,13 +146,16 @@ public class GameScreen implements Screen {
     }
 
     private void input() {
+        // Update world coordinates based on input
         worldCoordinates.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(worldCoordinates);
 
-        //Switches the layer viewed for debugging
+        // Switches the layer viewed for debugging
         if (Gdx.input.isKeyJustPressed(Input.Keys.L) && map.getLayers().getCount() > 1) {
             currentLayer = (currentLayer == 0) ? 1 : 0;  // Toggle between layer 0 and 1
         }
+
+        // Toggle placing mode with H
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
             togglePlacingMode();
         }
@@ -166,16 +164,20 @@ public class GameScreen implements Screen {
             highlightTiles.clearHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
             if (currentButton != null){
                 currentButton.setChecked(false);
+                currentButton = null;
             }
         }
 
     }
 
     private void logic() {
+        // Update timer
         timer.add(Gdx.graphics.getDeltaTime());
 
+        // Update the selection layer
         updateSelectionLayer(worldCoordinates);
 
+        // Update highlighting if placing is active
         if (isPlacing) {
             highlightTiles.updateHighlight(worldCoordinates, buildingManager.createBuilding("accommodation",0));
         }
@@ -183,17 +185,23 @@ public class GameScreen implements Screen {
         // Get tile information
         TileInfo tileInfo = getCurrentTileInfo();
 
+        // Convert world coordinates to tile coordinates
         int tileX = (int) (worldCoordinates.x / TILE_SIZE);
         int tileY = (int) (worldCoordinates.y / TILE_SIZE);
 
-        debugString = "FPS: " + Gdx.graphics.getFramesPerSecond() + "  "
-            + "Layer: " + currentLayer + "  "
-            + "Cell ID: " + tileInfo.getId() + "  ("
-            + (tileInfo.isFlippedH() ? "H, " : "")
-            + (tileInfo.isFlippedV() ? "V, " : "")
-            + tileInfo.getRotation() + ") "
-            + "Position: " + tileX + ", " + tileY + " "
-            + "Timer:" + timer.getTimeUI();
+        // Update debug string
+        debugString = String.format(
+            "FPS: %d  Layer: %d  Cell ID: %d  (%s%s, Rotation: %d) Position: %d, %d Timer: %s",
+            Gdx.graphics.getFramesPerSecond(),
+            currentLayer,
+            tileInfo.getId(),
+            tileInfo.isFlippedH() ? "H, " : "",
+            tileInfo.isFlippedV() ? "V, " : "",
+            tileInfo.getRotation(),
+            tileX,
+            tileY,
+            timer.getTimeUI()
+        );
     }
 
     private void draw() {
@@ -258,7 +266,11 @@ public class GameScreen implements Screen {
         buttonStage.dispose();
     }
 
-    //Returns the tile id and whether it is man made (can be used to determine if a tile is removable)
+    /**
+     * Retrieves information about the current tile under the cursor.
+     *
+     * @return TileInfo object containing tile details.
+     */
     private TileInfo getCurrentTileInfo() {
         // Convert world coordinates to tile coordinates
         int tileX = (int) (worldCoordinates.x / TILE_SIZE);
@@ -282,10 +294,20 @@ public class GameScreen implements Screen {
         return new TileInfo(id, isFlippedH, isFlippedV, rotation);
     }
 
+    /**
+     * Updates the selection layer to highlight the currently hovered tile.
+     *
+     * @param worldCoordinates The world coordinates of the cursor.
+     */
     private void updateSelectionLayer(Vector3 worldCoordinates){
         // Convert world coordinates to tile coordinates
         int tileX = (int) (worldCoordinates.x / TILE_SIZE);
         int tileY = (int) (worldCoordinates.y / TILE_SIZE);
+
+        // Validate tile coordinates
+        if (tileX < 0 || tileX >= MAP_WIDTH || tileY < 0 || tileY >= MAP_HEIGHT) {
+            return;
+        }
 
         // Select the highlighting layer
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(2);
@@ -293,14 +315,16 @@ public class GameScreen implements Screen {
         // Remove previously selected tile
         layer.setCell(lastHoveredTile[0], lastHoveredTile[1], null);
 
-        // Set the current cell to be tile #166 (selection tile)
+        // Set the current cell to be SELECTION_TILE
         TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-        StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[166]);
-        tile.setId(166);  // Explicitly setting the tile ID
+        StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[SELECTION_TILE]);
+        tile.setId(SELECTION_TILE);  // Explicitly setting the tile ID
         cell.setTile(tile);
         layer.setCell(tileX, tileY, cell);
 
+
         // Record the location of the tile we just set
-        lastHoveredTile = new int[]{tileX, tileY};
+        lastHoveredTile[0] = tileX;
+        lastHoveredTile[1] = tileY;
     }
 }
