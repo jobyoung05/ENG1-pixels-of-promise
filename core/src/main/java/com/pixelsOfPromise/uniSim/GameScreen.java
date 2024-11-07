@@ -14,7 +14,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -91,16 +90,16 @@ public class GameScreen implements Screen {
         }
 
         // Create map and background layer(0)
-
+        /*
         map = new TiledMap();
         MapLayers layers = map.getLayers();
         TiledMapTileLayer background = getTiledMapTileLayer();
         layers.add(background);
         layers.add(new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize));
-
+        */
 
         // ****Loads the premade map instead****
-        // map = new TmxMapLoader().load("untitled.tmx");
+        map = new TmxMapLoader().load("untitled.tmx");
         // *************************************
 
         // add a new empty layer for tile selector
@@ -114,6 +113,13 @@ public class GameScreen implements Screen {
         // Buildings
         buildingManager = new BuildingManager("buildings.json", textureRegions);
 
+        availableBuildings[0] = buildingManager.createBuilding("accommodation", 1000);
+        availableBuildings[1] = buildingManager.createBuilding("accommodation", 1000);
+        availableBuildings[0].setLocation(34, 28);
+        availableBuildings[1].setLocation(10,10);
+        availableBuildings[0].addToLayer(map);
+        availableBuildings[1].addToLayer(map);
+
         UIButton b = new UIButton(buttonStage, "Accommodation", 0, (int) height-32, 128, 32);
         b.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
@@ -126,12 +132,9 @@ public class GameScreen implements Screen {
 
     private TiledMapTileLayer getTiledMapTileLayer() {
         TiledMapTileLayer background = new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize);
+        int tileId = 95;
         for (int x = 0; x < 60; x++) {
             for (int y = 0; y < 36; y++) {
-                //5% of the time will set the tileid to 94
-                float probability = 0.05f;
-                int tileId = (MathUtils.random() < probability) ? 94 : 95;
-
                 TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                 StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[tileId]);
                 tile.setId(tileId);  // Explicitly setting the tile ID
@@ -145,8 +148,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        timer.add(delta);
+
         ScreenUtils.clear(100f / 255f, 100f / 255f, 250f / 255f, 1f);
-        updateSelectionLayer();
+
 
         Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
@@ -166,23 +171,12 @@ public class GameScreen implements Screen {
                 isPlacing = true;
             }
         }
-        if (isPlacing) {
-            highlightTiles.updateHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
-            // The key escape will deselect the building and refresh the button
-            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-                if (currentButton != null){
-                    currentButton.setChecked(false);
-                }
-                isPlacing = false;
-                highlightTiles.clearHighlight( worldCoordinates, buildingManager.createBuilding("accommodation", 0));
+        if (Gdx.input.isTouched() && Gdx.input.getY() > 64){
+            isPlacing = false;
+            highlightTiles.clearHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
+            if (currentButton != null){
+                currentButton.setChecked(false);
             }
-            if (Gdx.input.isTouched()){
-                availableBuildings[0] = buildingManager.createBuilding("accommodation", 1000);
-                availableBuildings[0].setLocation((int) worldCoordinates.x / tileSize, (int) worldCoordinates.y / tileSize);
-                availableBuildings[0].addToLayer(map);
-            }
-
-
         }
 
 
@@ -212,12 +206,19 @@ public class GameScreen implements Screen {
             + "Position: " + tileX + ", " + tileY + " "
             + "Timer:" + timer.getTimeUI();
 
+
+
         // Render the FPS
         game.batch.begin();
         game.font.draw(game.batch, debugString, 10, 20);
         game.batch.end();
 
         buttonStage.draw();
+
+        // Render the map
+        camera.update();
+        renderer.setView(camera);
+        renderer.render();
     }
 
     @Override
@@ -272,9 +273,7 @@ public class GameScreen implements Screen {
         return new TileInfo(id, isFlippedH, isFlippedV, rotation);
     }
 
-    private void updateSelectionLayer(){
-        // Get the mouse screen coordinates
-        Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+    private void updateSelectionLayer(Vector3 worldCoordinates){
         // Convert world coordinates to tile coordinates
         int tileX = (int) (worldCoordinates.x / tileSize);
         int tileY = (int) (worldCoordinates.y / tileSize);

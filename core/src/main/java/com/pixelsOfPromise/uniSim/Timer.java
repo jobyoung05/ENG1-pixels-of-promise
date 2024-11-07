@@ -31,5 +31,4 @@ public class Timer {
             return getMinutes() + "m" + getSeconds() + "s";
         }
     }
-
 }
