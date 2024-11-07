@@ -50,7 +50,7 @@ public class BuildingManager {
             buildingCounts.put(type, 0);
         }
         // Set limits per building type
-        buildingLimits.put(BuildingType.PLACE_TO_SLEEP, 100);
+        buildingLimits.put(BuildingType.PLACE_TO_SLEEP, 2);
         buildingLimits.put(BuildingType.PLACE_TO_LEARN, 1);
         buildingLimits.put(BuildingType.PLACE_TO_EAT, 1);
         buildingLimits.put(BuildingType.RECREATIONAL_ACTIVITY, 1);
