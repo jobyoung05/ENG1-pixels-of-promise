@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -125,9 +126,12 @@ public class GameScreen implements Screen {
 
     private TiledMapTileLayer getTiledMapTileLayer() {
         TiledMapTileLayer background = new TiledMapTileLayer(mapWidth, mapHeight, tileSize, tileSize);
-        int tileId = 95;
         for (int x = 0; x < 60; x++) {
             for (int y = 0; y < 36; y++) {
+                //5% of the time will set the tileid to 94
+                float probability = 0.05f;
+                int tileId = (MathUtils.random() < probability) ? 94 : 95;
+
                 TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                 StaticTiledMapTile tile = new StaticTiledMapTile(textureRegions[tileId]);
                 tile.setId(tileId);  // Explicitly setting the tile ID
