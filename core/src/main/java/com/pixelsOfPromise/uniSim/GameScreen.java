@@ -118,6 +118,10 @@ public class GameScreen implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 swapPlacementButton(accommodationButton);
 
+                if (buildingManager.isBuildingTypeAtLimit(BuildingType.PLACE_TO_SLEEP)) {
+                    swapPlacementButton(accommodationButton);
+                }
+
                 currentBuildingBeingPlacedName = "accommodation";
             }
         });
@@ -126,6 +130,10 @@ public class GameScreen implements Screen {
         teachingButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 swapPlacementButton(teachingButton);
+
+                if (buildingManager.isBuildingTypeAtLimit(BuildingType.PLACE_TO_LEARN)) {
+                    swapPlacementButton(accommodationButton);
+                }
 
                 currentBuildingBeingPlacedName = "teaching";
             }
@@ -156,7 +164,7 @@ public class GameScreen implements Screen {
 
         // Handle touch or mouse click for placing buildings
         if (currentButton != null && Gdx.input.isTouched() && Gdx.input.getY() > 64) {
-            placeBuilding();
+            boolean placed = placeBuilding();
         }
     }
 
@@ -217,10 +225,10 @@ public class GameScreen implements Screen {
         game.batch.end();
     }
 
-    private void placeBuilding() {
+    private boolean placeBuilding() {
         currentBuildingBeingPlaced = buildingManager.createBuilding(currentBuildingBeingPlacedName, 1000);
         if (currentBuildingBeingPlaced == null) {
-            return;
+            return false;
         }
         // Validate placement location
         if (isValidPlacement(worldCoordinates)) {
@@ -233,6 +241,8 @@ public class GameScreen implements Screen {
                 currentButton = null;
             }
         }
+
+        return true;
     }
 
     private boolean isValidPlacement(Vector3 coordinates) {

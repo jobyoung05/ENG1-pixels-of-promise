@@ -17,8 +17,8 @@ import java.util.Map;
 public class BuildingManager {
     private final Map<String, BuildingData> buildingDataMap;
     private final TextureRegion[] textureRegions;
-    private final EnumMap<BuildingType, Integer> buildingCounts;
-    private final EnumMap<BuildingType, Integer> buildingLimits;
+    protected final EnumMap<BuildingType, Integer> buildingCounts;
+    protected final EnumMap<BuildingType, Integer> buildingLimits;
 
     public BuildingManager(String jsonFilePath, TextureRegion[] textureRegions) {
         this.textureRegions = textureRegions;
@@ -56,6 +56,13 @@ public class BuildingManager {
         buildingLimits.put(BuildingType.PLACE_TO_LEARN, 1);
         buildingLimits.put(BuildingType.PLACE_TO_EAT, 1);
         buildingLimits.put(BuildingType.RECREATIONAL_ACTIVITY, 1);
+    }
+
+    public boolean isBuildingTypeAtLimit(BuildingType type) {
+        if (buildingCounts.get(type) >= buildingLimits.get(type)) {
+            return true;
+        }
+        return false;
     }
 
     // Load building data from a JSON file, but do not create Building instances yet
