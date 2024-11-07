@@ -27,12 +27,18 @@ public class UIButton extends TextButton{
         style.over = skin.newDrawable("white", Color.LIGHT_GRAY);
         style.checked = skin.newDrawable("white", Color.DARK_GRAY);
     }
+    private String actionName;
 
-    public UIButton(Stage stage, String text, int x, int y, int w, int h) {
+    public UIButton(Stage stage, String text, String actionName, int x, int y, int w, int h) {
         super(text, style);
+        this.actionName = actionName;
         this.setPosition(x, y);
         this.setSize(w, h);
         stage.addActor(this);
+    }
+
+    public String getActionName() {
+        return actionName;
     }
 
 }
