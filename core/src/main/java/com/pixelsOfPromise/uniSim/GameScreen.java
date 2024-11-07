@@ -38,6 +38,8 @@ public class GameScreen implements Screen {
     private int currentLayer = 0;
     private int[] lastHoveredTile = {0,0};
     private UIButton currentButton;
+    private String debugString;
+    private Vector3 worldCoordinates;
 
     // Building related stuff
     private BuildingManager buildingManager;
@@ -121,31 +123,29 @@ public class GameScreen implements Screen {
                 currentButton = isPlacing ? accommodationButton : null;
             }
         });
+
+        worldCoordinates = new Vector3();
     }
 
     @Override
     public void render(float delta) {
-        timer.add(delta);
-
         ScreenUtils.clear(100f / 255f, 100f / 255f, 250f / 255f, 1f);
 
-        Vector3 worldCoordinates = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        input();
+        logic();
+        draw();
+    }
+
+    private void input() {
+        worldCoordinates.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(worldCoordinates);
 
         //Switches the layer viewed for debugging
         if (Gdx.input.isKeyJustPressed(Input.Keys.L) && map.getLayers().getCount() > 1) {
             currentLayer = (currentLayer == 0) ? 1 : 0;  // Toggle between layer 0 and 1
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-            if (isPlacing) {
-                isPlacing = false;
-                highlightTiles.clearHighlight( worldCoordinates, buildingManager.createBuilding("accommodation", 0));
-                // maybe it would be better to pass in an oject that already has all of these things? or if not all of it
-                // definitely the size, textures to be used, etc. like this works fine for a simple colour of size n*m
-                // would not work so well for a building with different tiles being used
-                // store all available buildings in a dynamic list? then pass one in
-            } else {
-                isPlacing = true;
-            }
+            togglePlacingMode();
         }
         if (Gdx.input.isTouched() && Gdx.input.getY() > 64){
             isPlacing = false;
@@ -154,6 +154,14 @@ public class GameScreen implements Screen {
                 currentButton.setChecked(false);
             }
         }
+
+    }
+
+    private void logic() {
+        timer.add(Gdx.graphics.getDeltaTime());
+
+        updateSelectionLayer(worldCoordinates);
+
         if (isPlacing) {
             highlightTiles.updateHighlight(worldCoordinates, buildingManager.createBuilding("accommodation",0));
         }
@@ -164,7 +172,7 @@ public class GameScreen implements Screen {
         int tileX = (int) (worldCoordinates.x / tileSize);
         int tileY = (int) (worldCoordinates.y / tileSize);
 
-        String debugString = "FPS: " + Gdx.graphics.getFramesPerSecond() + "  "
+        debugString = "FPS: " + Gdx.graphics.getFramesPerSecond() + "  "
             + "Layer: " + currentLayer + "  "
             + "Cell ID: " + tileInfo.getId() + "  ("
             + (tileInfo.isFlippedH() ? "H, " : "")
@@ -172,21 +180,35 @@ public class GameScreen implements Screen {
             + tileInfo.getRotation() + ") "
             + "Position: " + tileX + ", " + tileY + " "
             + "Timer:" + timer.getTimeUI();
+    }
 
-        updateSelectionLayer(worldCoordinates);
+    private void draw() {
+        // Update the camera
+        camera.update();
 
-        // Render the FPS
+        // Set the view for the renderer using the camera
+        renderer.setView(camera);
+
+        // Render the map or background using the renderer
+        renderer.render();
+
+        // Start the SpriteBatch for drawing other elements
         game.batch.begin();
         game.font.draw(game.batch, debugString, 10, 20);
-        game.batch.end();
-
         buttonStage.draw();
-
-        // Render the map
-        camera.update();
-        renderer.setView(camera);
-        renderer.render();
+        game.batch.end();
     }
+
+
+    private void togglePlacingMode() {
+        if (isPlacing) {
+            isPlacing = false;
+            highlightTiles.clearHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
+        } else {
+            isPlacing = true;
+        }
+    }
+
 
     @Override
     public void show() {
