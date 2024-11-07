@@ -171,7 +171,8 @@ public class GameScreen implements Screen {
         // Update timer
         timer.add(Gdx.graphics.getDeltaTime());
 
-        if(timer.getSeconds() > 10){
+        // Ends game after 5 minutes
+        if(timer.getSeconds() > 300){
             game.setScreen(new EndScreen(game));
             dispose();
         }
