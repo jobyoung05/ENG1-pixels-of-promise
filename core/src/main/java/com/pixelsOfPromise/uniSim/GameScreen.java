@@ -159,15 +159,11 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
             togglePlacingMode();
         }
-        if (Gdx.input.isTouched() && Gdx.input.getY() > 64){
-            isPlacing = false;
-            highlightTiles.clearHighlight(worldCoordinates, buildingManager.createBuilding("accommodation", 0));
-            if (currentButton != null){
-                currentButton.setChecked(false);
-                currentButton = null;
-            }
-        }
 
+        // Handle touch or mouse click for placing buildings
+        if (isPlacing && Gdx.input.isTouched() && Gdx.input.getY() > 64) {
+            placeBuilding(worldCoordinates);
+        }
     }
 
     private void logic() {
@@ -221,6 +217,25 @@ public class GameScreen implements Screen {
         game.batch.end();
     }
 
+    private void placeBuilding(Vector3 coordinates) {
+        // Validate placement location
+        if (isValidPlacement(coordinates)) {
+            Building newBuilding = buildingManager.createBuilding("accommodation", 1000);
+            newBuilding.setLocation((int) coordinates.x, (int) coordinates.y);
+            newBuilding.addToLayer(map);
+            placedBuildings.add(newBuilding);
+            isPlacing = false;
+            if (currentButton != null) {
+                currentButton.setChecked(false);
+                currentButton = null;
+            }
+        }
+    }
+
+    private boolean isValidPlacement(Vector3 coordinates) {
+        // Logic here
+        return true; // Placeholder
+    }
 
     private void togglePlacingMode() {
         if (isPlacing) {
