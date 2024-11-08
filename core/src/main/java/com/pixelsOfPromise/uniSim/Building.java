@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.util.Arrays;
 
-public class Building {
+public class Building implements Placeable{
     private String name;
     private int cost;
     private TiledMapTileLayer.Cell[][] cells;
@@ -49,10 +49,6 @@ public class Building {
         return cost;
     }
 
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
-
     public void setLocation(int x, int y) {
         this.x = x;
         this.y = y;
@@ -60,14 +56,6 @@ public class Building {
 
     public TiledMapTileLayer.Cell[][] getCells() {
         return cells;
-    }
-
-    private boolean isPlacementValid(Vector3 worldCoordinates, TiledMap map){
-        Boolean isValid = false;
-
-
-
-        return isValid;
     }
 
 }
