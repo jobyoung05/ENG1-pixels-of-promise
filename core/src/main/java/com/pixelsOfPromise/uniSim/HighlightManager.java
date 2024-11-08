@@ -4,12 +4,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Array;
 
-public class HighlightTiles {
+public class HighlightManager {
     private final int tileSize = 16;
     private Array<int[]> lastHoveredTiles = new Array<>(); // Track all highlighted tiles
     static private TiledMapTileLayer layer = null;
 
-    public HighlightTiles(TiledMapTileLayer layer) {
+    public HighlightManager(TiledMapTileLayer layer) {
         this.layer = layer;
     }
 

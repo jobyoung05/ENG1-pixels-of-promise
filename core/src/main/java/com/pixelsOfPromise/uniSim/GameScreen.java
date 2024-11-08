@@ -2,7 +2,6 @@ package com.pixelsOfPromise.uniSim;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -57,7 +56,7 @@ public class GameScreen implements Screen {
     private List<Building> placedBuildings = new ArrayList<>();
     private Building currentBuildingBeingPlaced;
     private String currentBuildingBeingPlacedName;
-    private HighlightTiles highlightTiles;
+    private HighlightManager highlightManager;
 
 
     public GameScreen(final UniSim game) {
@@ -110,7 +109,7 @@ public class GameScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         // Initialize HighlightTiles
-        highlightTiles = new HighlightTiles((TiledMapTileLayer) map.getLayers().get(2));
+        highlightManager = new HighlightManager((TiledMapTileLayer) map.getLayers().get(2));
 
         // Buildings
         buildingManager = new BuildingManager("buildings.json", textureRegions);
@@ -214,7 +213,7 @@ public class GameScreen implements Screen {
 
         // Update highlighting if placing is active
         if (currentButton != null) {
-            highlightTiles.updateHighlight(worldCoordinates, buildingManager.getBuildingCells(currentBuildingBeingPlacedName));
+            highlightManager.updateHighlight(worldCoordinates, buildingManager.getBuildingCells(currentBuildingBeingPlacedName));
         }
 
         // Get tile information
@@ -243,7 +242,7 @@ public class GameScreen implements Screen {
         buildingCountString = "";
 
         for (Map.Entry<BuildingType, Integer> entry : buildingCount.entrySet()) {
-            buildingCountString += entry.getKey().name() + ": " + entry.getValue() + " | ";
+            buildingCountString += entry.getKey().toString() + ": " + entry.getValue() + " | ";
         }
     }
 
@@ -300,7 +299,7 @@ public class GameScreen implements Screen {
         else if (button != null) {
             currentButton = button;
         }
-        highlightTiles.clearHighlight();
+        highlightManager.clearHighlight();
     }
 
 
