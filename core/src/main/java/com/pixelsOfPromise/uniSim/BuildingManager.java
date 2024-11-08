@@ -138,6 +138,10 @@ public class BuildingManager {
         }
     }
 
+    public EnumMap<BuildingType, Integer> getBuildingCounts() {
+        return buildingCounts;
+    }
+
     // Helper method to create cells from TileInfo data
     private TiledMapTileLayer.Cell[][] createCells(TileInfo[][] tileInfoArray) {
         TiledMapTileLayer.Cell[][] cells = new TiledMapTileLayer.Cell[tileInfoArray.length][];

@@ -20,7 +20,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class GameScreen implements Screen {
@@ -46,6 +48,7 @@ public class GameScreen implements Screen {
     private int[] lastHoveredTile = {0, 0};
     private UIButton currentButton;
     private String debugString;
+    private String buildingCountString;
     private Vector3 worldCoordinates;
 
     // Building management
@@ -234,6 +237,14 @@ public class GameScreen implements Screen {
             tileY,
             timer.getTimeUI()
         );
+
+        EnumMap<BuildingType, Integer> buildingCount = buildingManager.getBuildingCounts();
+
+        buildingCountString = "";
+
+        for (Map.Entry<BuildingType, Integer> entry : buildingCount.entrySet()) {
+            buildingCountString += entry.getKey().name() + ": " + entry.getValue() + " | ";
+        }
     }
 
     private void draw() {
@@ -249,6 +260,7 @@ public class GameScreen implements Screen {
         // Start the SpriteBatch for drawing other elements
         game.batch.begin();
         game.font.draw(game.batch, debugString, 10, 20);
+        game.font.draw(game.batch, buildingCountString, 10,40);
         buttonStage.draw();
         game.batch.end();
     }
