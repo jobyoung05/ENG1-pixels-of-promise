@@ -8,15 +8,14 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class BuildingManager {
     private final Map<String, BuildingData> buildingDataMap;
     private final TextureRegion[] textureRegions;
     protected final EnumMap<BuildingType, Integer> buildingCounts;
     protected final EnumMap<BuildingType, Integer> buildingLimits;
+    private List<Building> placedBuildings = new ArrayList<>();
 
     public BuildingManager(String jsonFilePath, TextureRegion[] textureRegions) {
         this.textureRegions = textureRegions;
@@ -58,7 +57,9 @@ public class BuildingManager {
     }
 
     public boolean isBuildingTypeAtLimit(BuildingType type) {
-      return buildingCounts.get(type) >= buildingLimits.get(type);
+        boolean isAtLimit = buildingCounts.get(type) >= buildingLimits.get(type);
+        if (isAtLimit) {Gdx.app.log("BuildingManager","Building type (" + type.toString() + ") is at limit.");}
+        return isAtLimit;
     }
 
     // Load building data from a JSON file, but do not create Building instances yet
@@ -142,6 +143,18 @@ public class BuildingManager {
         return buildingCounts;
     }
 
+    public List<Building> getPlacedBuildings(){
+        return placedBuildings;
+    }
+
+    public void addPlacedBuilding(Building building) {
+        placedBuildings.add(building);
+    }
+
+    public void removePlacedBuilding(Building building) {
+        placedBuildings.remove(building);
+    }
+
     // Helper method to create cells from TileInfo data
     private TiledMapTileLayer.Cell[][] createCells(TileInfo[][] tileInfoArray) {
         TiledMapTileLayer.Cell[][] cells = new TiledMapTileLayer.Cell[tileInfoArray.length][];
@@ -166,4 +179,6 @@ public class BuildingManager {
         cell.setRotation(tileInfo.getRotation());
         return cell;
     }
+
+
 }
