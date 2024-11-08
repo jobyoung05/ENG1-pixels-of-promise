@@ -113,7 +113,7 @@ public class GameScreen implements Screen {
         buildingManager = new BuildingManager("buildings.json", textureRegions);
 
         // Setup UI button for accommodation
-        UIButton accommodationButton = new UIButton(buttonStage, "Accommodation", "accommodation", 0, (int) height-32, 128, 32);
+        UIButton accommodationButton = new UIButton(buttonStage, "Accommodation", "PLACE_TO_SLEEP", 0, (int) height-32, 128, 32);
         accommodationButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 swapPlacementButton(accommodationButton);
@@ -126,16 +126,44 @@ public class GameScreen implements Screen {
             }
         });
 
-        UIButton teachingButton = new UIButton(buttonStage, "Teaching", "teaching", 0, (int) height-64, 128, 32);
+        UIButton teachingButton = new UIButton(buttonStage, "Teaching", "PLACE_TO_LEARN", 0, (int) height-64, 128, 32);
         teachingButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 swapPlacementButton(teachingButton);
 
                 if (buildingManager.isBuildingTypeAtLimit(BuildingType.PLACE_TO_LEARN)) {
-                    swapPlacementButton(accommodationButton);
+                    swapPlacementButton(teachingButton);
                 }
 
                 currentBuildingBeingPlacedName = "teaching";
+            }
+        });
+
+
+
+        UIButton recreationalButton = new UIButton(buttonStage, "Recreational", "RECREATIONAL_ACTIVITY", 128, (int) height-32, 128, 32);
+        recreationalButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                swapPlacementButton(recreationalButton);
+
+                if (buildingManager.isBuildingTypeAtLimit(BuildingType.RECREATIONAL_ACTIVITY)) {
+                    swapPlacementButton(recreationalButton);
+                }
+
+                currentBuildingBeingPlacedName = "swimming pool";
+            }
+        });
+
+        UIButton cafeteriaButton = new UIButton(buttonStage, "Cafeteria", "PLACE_TO_EAT", 128, (int) height-64, 128, 32);
+        cafeteriaButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                swapPlacementButton(cafeteriaButton);
+
+                if (buildingManager.isBuildingTypeAtLimit(BuildingType.PLACE_TO_EAT)) {
+                    swapPlacementButton(cafeteriaButton);
+                }
+
+                currentBuildingBeingPlacedName = "cafeteria";
             }
         });
 

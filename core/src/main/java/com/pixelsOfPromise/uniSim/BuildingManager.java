@@ -5,11 +5,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +25,7 @@ public class BuildingManager {
         this.buildingLimits = new EnumMap<>(BuildingType.class);
         initializeBuildingCounts();
         loadBuildingData(jsonFilePath);
+        System.out.println(buildingDataMap);
     }
 
     // Inner class to hold building data
@@ -53,16 +52,13 @@ public class BuildingManager {
         }
         // Set limits per building type
         buildingLimits.put(BuildingType.PLACE_TO_SLEEP, 2);
-        buildingLimits.put(BuildingType.PLACE_TO_LEARN, 1);
+        buildingLimits.put(BuildingType.PLACE_TO_LEARN, 2);
         buildingLimits.put(BuildingType.PLACE_TO_EAT, 1);
-        buildingLimits.put(BuildingType.RECREATIONAL_ACTIVITY, 1);
+        buildingLimits.put(BuildingType.RECREATIONAL_ACTIVITY, 2);
     }
 
     public boolean isBuildingTypeAtLimit(BuildingType type) {
-        if (buildingCounts.get(type) >= buildingLimits.get(type)) {
-            return true;
-        }
-        return false;
+      return buildingCounts.get(type) >= buildingLimits.get(type);
     }
 
     // Load building data from a JSON file, but do not create Building instances yet

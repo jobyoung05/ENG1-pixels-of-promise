@@ -65,9 +65,6 @@ public class Building {
     private boolean isPlacementValid(Vector3 worldCoordinates, TiledMap map){
         Boolean isValid = false;
 
-        if (getCost() == 1) {
-
-        }
 
 
         return isValid;
