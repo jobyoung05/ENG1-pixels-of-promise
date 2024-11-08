@@ -52,7 +52,6 @@ public class GameScreen implements Screen {
 
     // Building management
     private BuildingManager buildingManager;
-    private List<Building> availableBuildings = new ArrayList<>();
     private List<Building> placedBuildings = new ArrayList<>();
     private Building currentBuildingBeingPlaced;
     private String currentBuildingBeingPlacedName;
@@ -273,7 +272,7 @@ public class GameScreen implements Screen {
         if (isValidPlacement(worldCoordinates)) {
             currentBuildingBeingPlaced.setLocation((int) worldCoordinates.x / TILE_SIZE, (int) worldCoordinates.y / TILE_SIZE);
             currentBuildingBeingPlaced.addToLayer(map);
-            placedBuildings.add(currentBuildingBeingPlaced);
+            buildingManager.addPlacedBuilding(currentBuildingBeingPlaced);
             currentBuildingBeingPlaced = null;
             if (currentButton != null) {
                 currentButton.setChecked(false);
