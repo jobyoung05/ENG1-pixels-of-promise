@@ -195,11 +195,30 @@ public class GameScreen implements Screen {
         if (currentButton != null && Gdx.input.isTouched() && Gdx.input.getY() > 64) {
             boolean placed = placeBuilding();
         }
+
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            // If a building is being placed, clear it and remove the highlight
+            if (currentBuildingBeingPlaced != null) {
+                currentBuildingBeingPlaced = null;
+                highlightManager.clearHighlight();
+            }
+            // If a button is selected, deselect it
+            if (currentButton != null) {
+                swapPlacementButton(currentButton);
+            }
+            // If neither a building nor a button is active, pause the game
+            else {
+                isPaused = !isPaused;
+            }
+        }
     }
 
     private void logic() {
         // Update timer
-        timer.add(Gdx.graphics.getDeltaTime());
+        if (!isPaused) {
+            timer.add(Gdx.graphics.getDeltaTime());
+        }
 
         // Ends game after 5 minutes
         if(timer.getSeconds() > 300){
