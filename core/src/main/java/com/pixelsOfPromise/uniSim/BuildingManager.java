@@ -24,7 +24,6 @@ public class BuildingManager {
         this.buildingLimits = new EnumMap<>(BuildingType.class);
         initializeBuildingCounts();
         loadBuildingData(jsonFilePath);
-        System.out.println(buildingDataMap);
     }
 
     // Inner class to hold building data
