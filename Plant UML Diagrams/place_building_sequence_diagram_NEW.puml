@@ -1,0 +1,39 @@
+@startuml
+actor User
+participant UIManager
+participant GameScreen.logic
+participant BuildingManager
+participant HighlightManager
+
+User -> UIManager : Clicks "Place Building"
+activate UIManager #DDDDDD
+UIManager -> GameScreen.logic : Request to enter building placement mode
+activate GameScreen.logic #FFDDDD
+GameScreen.logic -> BuildingManager : Check if building limit is reached for type
+activate BuildingManager #DDFFDD
+BuildingManager -> BuildingManager : Validate building limit
+BuildingManager --> GameScreen.logic : Return
+deactivate BuildingManager
+group Building placement mode [Building limit not reached]
+  loop until User clicks
+    GameScreen.logic -> HighlightManager : Draw building highlight at mouse location
+    activate HighlightManager #DDDDFF
+    HighlightManager --> GameScreen.logic : Return
+    deactivate HighlightManager
+  end
+  User -> GameScreen.logic : Clicks location on map
+  GameScreen.logic -> GameScreen.logic : Validate building location
+  opt Location valid
+    GameScreen.logic -> BuildingManager : Create new building at mouse location
+    activate BuildingManager #DDFFDD
+    BuildingManager --> GameScreen.logic : Return
+    deactivate BuildingManager
+  end
+end
+
+GameScreen.logic -> UIManager : Exit building mode
+deactivate GameScreen.logic
+deactivate UIManager
+
+
+@enduml
