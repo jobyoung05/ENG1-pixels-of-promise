@@ -198,8 +198,14 @@ public class GameScreen implements Screen {
 
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            isPaused = !isPaused;
-            Gdx.app.log("Timer", isPaused ? "Timer paused" : "Timer unpaused");
+            // exit building mode when ESC pressed, or pause the timer if building mode is not active
+            if (currentButton != null) {
+                swapPlacementButton(null);
+            }
+            else{
+                isPaused = !isPaused;
+                Gdx.app.log("Timer", isPaused ? "Timer paused" : "Timer unpaused");
+            }
         }
     }
 
