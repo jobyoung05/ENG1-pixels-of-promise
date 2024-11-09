@@ -1,0 +1,22 @@
+@startuml
+title Event Handling Loop for UniSim
+
+start
+
+' Event Handling Loop
+:Check for Set Events by seeing if time = setEvent time start;
+if (Set Event Triggered?) then (Yes)
+    :Trigger Set Event;
+    :Execute Set Event Actions;
+else (No)
+endif
+
+:Check for Random Events by time = random time decided when game was loaded;
+if (Random Event Occurs?) then (Yes)
+    :Trigger Random Event;
+    :Execute Random Event Actions;
+else (No)
+endif
+
+stop
+@enduml

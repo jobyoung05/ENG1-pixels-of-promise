@@ -1,0 +1,46 @@
+@startuml
+title Detailed Activity Diagram for UniSim - New Game Option
+
+start
+:Initialise Game Resources;
+:Load Assets (Textures, Fonts, etc.);
+:Display Main Menu;
+
+if (Selected option?) then (New Game)
+    :Load GameScreen;
+    :Initialise GameScreen;
+    :Initialise Buttons;
+    :Initialize Event System;
+    :Define Set Events and Timers;
+    :Define Random Event Probabilities;
+
+    while (game running) is (true)
+        :Handle pause/unpause game;
+        if (game is paused?) then (No)
+            :Check Input;
+            :Increment time;
+            :Update satisfaction score;
+
+            :Handle Building Placement;
+            :Handle Path Placement;
+            :Handle Object Selection, Moving, and Deletion;
+            :Handle Events (random and set);
+
+            if (Time limit reached?) then (Yes)
+                :End game;
+                break
+            else (No)
+            endif
+        else (Yes)
+        endif
+    endwhile
+
+    :Display final score;
+
+else (Score Screen)
+    :Retrieve Previous Scores;
+    :Display Scores;
+endif
+
+stop
+@enduml

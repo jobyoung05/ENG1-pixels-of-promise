@@ -1,0 +1,43 @@
+@startuml
+title Building Placement Loop
+
+start
+
+:Swap current button to button pressed;
+:Update current building being placed;
+:Draw highlight of building on mouse cursor;
+
+if (Clicked on Map?) then (Yes)
+    :Check Valid Placement;
+    if (Valid placement?) then (Yes)
+        :Check Funds for Building;
+        if (Has enough money?) then (Yes)
+            :Check Building Limit;
+            if (Within Building Limit?) then (Yes)
+                :Place building;
+                :Deduct building cost from funds;
+                :Increment Building Count;
+                :Unselect button;
+                :Update current building being placed to none;
+            else (No)
+                :Display "Building Limit Reached" message;
+                :Unselect button;
+            endif
+        else (No)
+            :Display "Insufficient Funds" message;
+        endif
+    else (No)
+        :Display "Invalid Placement" message;
+    endif
+else (Button)
+    if (Button is same as current?) then (Yes)
+        :Unselect button;
+        :Update current building being placed to none;
+    else (No)
+        :Swap current button to button pressed;
+        :Update current building being placed;
+    endif
+endif
+
+stop
+@enduml

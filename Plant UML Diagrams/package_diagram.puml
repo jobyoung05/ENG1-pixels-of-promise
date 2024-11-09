@@ -1,0 +1,72 @@
+@startuml
+!define RECTANGLE class
+
+' Define Interfaces
+interface Placeable
+
+' Define Packages
+package "Screens" {
+    [MainMenuScreen] as MMS
+    [GameScreen] as GS
+    [EndScreen] as ES
+    [ScoreScreen] as SS
+}
+
+package "GameComponents/Managers" {
+    [Timer] as Timer
+    [BuildingManager] as BM
+    [PathManager] as PM
+    [UIManager] as UI
+    [ResourceManager] as RM
+    [EventManager] as EM
+    [SatisfactionManager] as SM
+
+    package "UIComponents" {
+        [Button] as Btn
+        [Hint] as Hnt
+    }
+
+    package "Entities" {
+        [Building] as B
+        [Path] as P
+    }
+}
+
+package "Assets" {
+    [buildings.json] as BJson
+    [galletcity.png] as Mpng
+}
+
+' Define Navigations between Screens
+MMS --> GS : Navigate to
+MMS --> SS : Navigate to
+GS --> ES : Navigate to
+ES --> MMS : Navigate to
+SS --> MMS : Navigate to
+
+' Define Relationships within GameComponents
+BM --> B : Creates
+PM --> P : Creates
+B ..|> Placeable
+P ..|> Placeable
+
+SM --> BM : Uses placedBuildings
+SM --> PM : Uses placedPaths
+
+UI --> Btn : Manages
+UI --> Hnt : Manages
+
+' Connect GameScreen to GameComponents
+GS --> Timer
+GS --> BM
+GS --> PM
+GS --> UI
+GS --> RM
+GS --> EM
+GS --> SM
+
+' Add dependencies for data loading
+BM --> BJson : Loads from
+GS --> Mpng : Loads map from
+
+@enduml

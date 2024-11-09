@@ -1,0 +1,121 @@
+@startuml
+title Detailed Activity Diagram for UniSim - New Game Option
+
+start
+:Initialise Game Resources;
+:Load Assets (Textures, Fonts, etc.);
+:Display Main Menu;
+
+if (Selected option?) then (New Game)
+    :Load GameScreen;
+    :Initialise GameScreen;
+    :Initialise Buttons;
+    while (game running) is (true)
+        :Check Input;
+        :Increment time;
+        :Update satisfaction score;
+
+        ' Handle Building Placement
+        while (Building button pressed?) is (Yes)
+            :Swap current button to button pressed;
+            :Update current building being placed;
+            :Draw highlight of building on mouse cursor;
+            if (Clicked on Map?) then (Yes)
+                :Check Valid Placement;
+                if (Valid placement?) then (Yes)
+                    :Check Funds for Building;
+                    if (Has enough money?) then (Yes)
+                        :Check Building Limit;
+                        if (Within Building Limit?) then (Yes)
+                            :Place building;
+                            :Deduct building cost from funds;
+                            :Increment Building Count;
+                            :Unselect button;
+                            :Update current building being placed to none;
+                        else (No)
+                            :Display "Building Limit Reached" message;
+                            :Unselect button;
+                        endif
+                    else (No)
+                        :Display "Insufficient Funds" message;
+                    endif
+                else (No)
+                    :Display "Invalid Placement" message;
+                endif
+            else (Button)
+                if (Button is same as current?) then (Yes)
+                    :Unselect button;
+                    :Update current building being placed to none;
+                else (No)
+                    :Swap current button to button pressed;
+                    :Update current building being placed;
+                endif
+            endif
+        endwhile
+
+        ' Handle Path Placement
+        while (Path button pressed?) is (Yes)
+            :Draw highlight of path on mouse cursor;
+            if (Clicked on Map?) then (Yes)
+                :Check Valid Path Placement;
+                if (Valid placement?) then (Yes)
+                    :Check Funds for Path;
+                    if (Has enough money?) then (Yes)
+                        :Place path;
+                        :Deduct path cost from funds;
+                    else (No)
+                        :Display "Insufficient Funds" message;
+                    endif
+                else (No)
+                    :Display "Invalid Path Placement" message;
+                endif
+            else (Button)
+                if (Button is same as current?) then (Yes)
+                    :Unselect button;
+                else (No)
+                    :Swap current button to button pressed;
+                    if (Is building button?) then (Yes)
+                        --> [Building Placement];
+                    endif
+                endif
+            endif
+        endwhile
+
+        ' Handle Object Selection, Moving, and Deletion
+        while (Object clicked?) is (Yes)
+            :Select Object;
+            :Highlight Selected Object;
+            :Wait for Move or Delete Command;
+
+            if (Delete command received?) then (Yes)
+                :Check Funds for Deletion;
+                if (Has enough money?) then (Yes)
+                    :Delete Object;
+                    :Deduct deletion cost from funds;
+                    :Decrement Building Count;
+                    :Update Game State;
+                else (No)
+                    :Display "Insufficient Funds for Deletion" message;
+                endif
+            elseif (Move command received?) then (Yes)
+                :Move Object;
+                :Update Object Position;
+            else (Cancel Command)
+                :Deselect Object;
+            endif
+        endwhile
+
+    if (Time limit reached) then (Yes)
+        :End game;
+    else (No)
+    endif
+    endwhile
+:Display final score;
+
+else (Score Screen)
+    :Retrieve Previous Scores;
+    :Display Scores;
+endif
+
+stop
+@enduml

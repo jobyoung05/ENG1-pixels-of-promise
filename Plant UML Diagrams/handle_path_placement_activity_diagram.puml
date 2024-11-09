@@ -1,0 +1,33 @@
+@startuml
+title Path Placement Loop
+
+start
+
+:Draw highlight of path on mouse cursor;
+
+if (Clicked on Map?) then (Yes)
+    :Check Valid Path Placement;
+    if (Valid placement?) then (Yes)
+        :Check Funds for Path;
+        if (Has enough money?) then (Yes)
+            :Place path;
+            :Deduct path cost from funds;
+        else (No)
+            :Display "Insufficient Funds" message;
+        endif
+    else (No)
+        :Display "Invalid Path Placement" message;
+    endif
+else (Button)
+    if (Button is same as current?) then (Yes)
+        :Unselect button;
+    else (No)
+        :Swap current button to button pressed;
+        if (Is building button?) then (Yes)
+            -[#green]-> [go to Building Placement loop];
+        endif
+    endif
+endif
+
+stop
+@enduml

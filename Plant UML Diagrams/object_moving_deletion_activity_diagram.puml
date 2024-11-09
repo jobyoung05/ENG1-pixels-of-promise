@@ -1,0 +1,34 @@
+@startuml
+title Object Selection, Moving, and Deletion Loop
+
+start
+
+:Select Object;
+:Highlight Selected Object;
+:Wait for Move or Delete Command;
+
+if (Delete command received?) then (Yes)
+    :Check Funds for Deletion;
+    if (Has enough money?) then (Yes)
+        :Delete Object;
+        :Deduct deletion cost from funds;
+        :Decrement Building Count;
+        :Update Game State;
+    else (No)
+        :Display "Insufficient Funds for Deletion" message;
+    endif
+elseif (Move command received?) then (Yes)
+    :Initiate Move Object;
+    :Determine New Position;
+    if (Valid Position?) then (Yes)
+        :Move Object to New Position;
+        :Update Object Position;
+    else (No)
+        :Display "Invalid Move Position" message;
+    endif
+else (Cancel Command)
+    :Deselect Object;
+endif
+
+stop
+@enduml
