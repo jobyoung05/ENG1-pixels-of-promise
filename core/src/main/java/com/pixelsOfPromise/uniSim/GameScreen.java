@@ -198,19 +198,8 @@ public class GameScreen implements Screen {
 
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            // If a building is being placed, clear it and remove the highlight
-            if (currentBuildingBeingPlaced != null) {
-                currentBuildingBeingPlaced = null;
-                highlightManager.clearHighlight();
-            }
-            // If a button is selected, deselect it
-            if (currentButton != null) {
-                swapPlacementButton(currentButton);
-            }
-            // If neither a building nor a button is active, pause the game
-            else {
-                isPaused = !isPaused;
-            }
+            isPaused = !isPaused;
+            Gdx.app.log("Timer", isPaused ? "Timer paused" : "Timer unpaused");
         }
     }
 
