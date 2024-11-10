@@ -1,0 +1,30 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+
+'''' Attributes and methods '''
+
+interface Placeable
+class GameScreen
+class Building
+class Path
+class UIManager
+class BuildingManager
+class PathManager
+class HighlightManager
+class SatisfactionManager
+class Timer
+
+Placeable <|.. Building
+Placeable <|.. Path
+GameScreen *-- BuildingManager
+GameScreen *-- PathManager
+GameScreen *-- HighlightManager
+GameScreen *-- UIManager
+GameScreen *-- SatisfactionManager
+GameScreen *-- Timer
+
+
+
+@enduml
