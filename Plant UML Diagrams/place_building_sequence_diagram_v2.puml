@@ -1,4 +1,5 @@
 @startuml
+title Place building sequence diagram
 actor User
 participant UIManager
 participant GameScreen.logic

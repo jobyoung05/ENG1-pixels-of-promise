@@ -4,7 +4,7 @@
 
 SaveScore --> MainMenu: Replay game
 
-MainMenu : this is a string
+MainMenu :
 
 MainMenu -> DisplayScores: To scoreboard
 DisplayScores -> MainMenu: Back to menu

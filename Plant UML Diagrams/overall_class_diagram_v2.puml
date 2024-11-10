@@ -13,19 +13,23 @@ class GameScreen {
     -draw()
 }
 class Building{
-    -int x
-    -int y
+    -Location data
     +addToLayer()
     +setLocation()
 }
 class Path{
-    - int x
-    - int y
+    -Location data
     +addToLayer()
     +setLocation()
 }
+class EventManager{
+    -Event[] events
+    +startEvent()
+    +stopEvent()
+}
 class UIManager{
     -Button[] buttons
+    -Hint[] hints / tips
     +addButton()
     +removeButton()
 }
@@ -46,7 +50,7 @@ class HighlightManager{
     +clearHighlight()
 }
 class SatisfactionManager{
-    -int satisfaction
+    satisfaction score
     +updateSatisfaction()
     +getCurrentSatisfaction()
 }
@@ -55,6 +59,18 @@ class Timer{
     +addTime()
     +getTime()
 }
+class ResourceManager{
+    Manages money
+    +getMoney()
+    +addMoney()
+    +subtractMoney()
+}
+class Button{
+    +onClick()
+    }
+class Hint{
+    +displayHint()
+    }
 
 Placeable <|.. Building
 Placeable <|.. Path
@@ -63,9 +79,15 @@ GameScreen *-- PathManager
 GameScreen *-- HighlightManager
 GameScreen *-- UIManager
 GameScreen *-- SatisfactionManager
-GameScreen *-- Timer
-BuildingManager *-- Building
-PathManager *-- Path
+GameScreen o-- Timer
+GameScreen *-- EventManager
+GameScreen *-- ResourceManager
+BuildingManager --o Building
+PathManager --o Path
+
+UIManager --o Button
+UIManager --o Hint
+
 
 
 

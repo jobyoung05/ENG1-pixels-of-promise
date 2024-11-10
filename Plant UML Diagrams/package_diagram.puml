@@ -32,7 +32,7 @@ package "GameComponents/Managers" {
     }
 }
 
-package "Assets" {
+database "Assets" {
     [buildings.json] as BJson
     [galletcity.png] as Mpng
 }
