@@ -2,19 +2,59 @@
 
 skinparam classAttributeIconSize 0
 
-
-'''' Attributes and methods '''
-
-interface Placeable
-class GameScreen
-class Building
-class Path
-class UIManager
-class BuildingManager
-class PathManager
-class HighlightManager
-class SatisfactionManager
-class Timer
+interface Placeable{
+    +addToLayer()
+    +setLocation()
+}
+class GameScreen {
+    -gdx.TiledMap map
+    -input()
+    -logic()
+    -draw()
+}
+class Building{
+    -int x
+    -int y
+    +addToLayer()
+    +setLocation()
+}
+class Path{
+    - int x
+    - int y
+    +addToLayer()
+    +setLocation()
+}
+class UIManager{
+    -Button[] buttons
+    +addButton()
+    +removeButton()
+}
+class BuildingManager{
+    -Building[] buildings
+    +createBuilding()
+    +removeBuilding()
+    +getBuildingCounts()
+}
+class PathManager{
+    -Path[] paths
+    +createPath()
+    +removePath()
+    +getPathConnections()
+}
+class HighlightManager{
+    +updateHighlight()
+    +clearHighlight()
+}
+class SatisfactionManager{
+    -int satisfaction
+    +updateSatisfaction()
+    +getCurrentSatisfaction()
+}
+class Timer{
+    -float time
+    +addTime()
+    +getTime()
+}
 
 Placeable <|.. Building
 Placeable <|.. Path
@@ -24,6 +64,8 @@ GameScreen *-- HighlightManager
 GameScreen *-- UIManager
 GameScreen *-- SatisfactionManager
 GameScreen *-- Timer
+BuildingManager *-- Building
+PathManager *-- Path
 
 
 
