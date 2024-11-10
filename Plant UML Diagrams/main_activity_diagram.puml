@@ -1,5 +1,5 @@
 @startuml
-title Detailed Activity Diagram for UniSim - New Game Option
+title Detailed Activity Diagram
 
 start
 :Initialise Game Resources;

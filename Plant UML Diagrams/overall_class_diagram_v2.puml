@@ -1,79 +1,115 @@
 @startuml
 
+' Set the overall layout direction to left to right
+left to right direction
+
 skinparam classAttributeIconSize 0
 
-interface Placeable{
-    +addToLayer()
-    +setLocation()
-}
-class GameScreen {
-    -gdx.TiledMap map
-    -input()
-    -logic()
-    -draw()
-}
-class Building{
-    -Location data
-    +addToLayer()
-    +setLocation()
-}
-class Path{
-    -Location data
-    +addToLayer()
-    +setLocation()
-}
-class EventManager{
-    -Event[] events
-    +startEvent()
-    +stopEvent()
-}
-class UIManager{
-    -Button[] buttons
-    -Hint[] hints / tips
-    +addButton()
-    +removeButton()
-}
-class BuildingManager{
-    -Building[] buildings
-    +createBuilding()
-    +removeBuilding()
-    +getBuildingCounts()
-}
-class PathManager{
-    -Path[] paths
-    +createPath()
-    +removePath()
-    +getPathConnections()
-}
-class HighlightManager{
-    +updateHighlight()
-    +clearHighlight()
-}
-class SatisfactionManager{
-    satisfaction score
-    +updateSatisfaction()
-    +getCurrentSatisfaction()
-}
-class Timer{
-    -float time
-    +addTime()
-    +getTime()
-}
-class ResourceManager{
-    Manages money
-    +getMoney()
-    +addMoney()
-    +subtractMoney()
-}
-class Button{
-    +onClick()
+' Package for Screen Classes
+package "Screens" {
+    class MainMenuScreen {
+        -input()
+        -logic()
+        -draw()
     }
-class Hint{
-    +displayHint()
+    class ScoreScreen {
+        -input()
+        -logic()
+        -draw()
+    }
+    class EndScreen {
+        -input()
+        -logic()
+        -draw()
+    }
+    class GameScreen {
+        -gdx.TiledMap map
+        -input()
+        -logic()
+        -draw()
+    }
+}
+
+' Package for Managers
+package "Managers" {
+    class EventManager {
+        -Event[] events
+        +startEvent()
+        +stopEvent()
+    }
+    class UIManager {
+        -Button[] buttons
+        -Hint[] hints / tips
+        +addButton()
+        +removeButton()
+    }
+    class BuildingManager {
+        -Building[] buildings
+        +createBuilding()
+        +removeBuilding()
+        +getBuildingCounts()
+    }
+    class PathManager {
+        -Path[] paths
+        +createPath()
+        +removePath()
+        +getPathConnections()
+    }
+    class HighlightManager {
+        +updateHighlight()
+        +clearHighlight()
+    }
+    class SatisfactionManager {
+        satisfaction score
+        +updateSatisfaction()
+        +getCurrentSatisfaction()
+    }
+    class Timer {
+        -float time
+        +addTime()
+        +getTime()
+    }
+    class ResourceManager {
+        Manages money
+        +getMoney()
+        +addMoney()
+        +subtractMoney()
+    }
+}
+
+' Package for Entities
+package "Entities" {
+    interface Placeable {
+        +addToLayer()
+        +setLocation()
     }
 
+    class Building {
+        -Location data
+        +addToLayer()
+        +setLocation()
+    }
+    class Path {
+        -Location data
+        +addToLayer()
+        +setLocation()
+    }
+}
+
+' Package for UI Elements
+package "UI Elements" {
+    class Button {
+        +onClick()
+    }
+    class Hint {
+        +displayHint()
+    }
+}
+
+' Relationships
 Placeable <|.. Building
 Placeable <|.. Path
+
 GameScreen *-- BuildingManager
 GameScreen *-- PathManager
 GameScreen *-- HighlightManager
@@ -82,13 +118,15 @@ GameScreen *-- SatisfactionManager
 GameScreen o-- Timer
 GameScreen *-- EventManager
 GameScreen *-- ResourceManager
+
 BuildingManager --o Building
 PathManager --o Path
 
 UIManager --o Button
 UIManager --o Hint
 
-
-
+GameScreen -- EndScreen
+GameScreen -- ScoreScreen
+GameScreen -- MainMenuScreen
 
 @enduml
